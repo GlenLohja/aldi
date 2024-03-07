@@ -14,8 +14,7 @@ layout = html.Div(
             [
                 dbc.Col(
                     [
-                        dcc.Dropdown(options=df.continent.unique(),
-                                     id='cont-choice')
+                        dcc.Dropdown(options=df.continent.unique(), id='cont-choice')
                     ], xs=10, sm=10, md=8, lg=4, xl=4, xxl=4
                 )
             ]
@@ -25,9 +24,7 @@ layout = html.Div(
                 dbc.Col(
                     [
                         dcc.Graph(id='line-fig',
-                                  figure=px.histogram(df, x='continent',
-                                                      y='lifeExp',
-                                                      histfunc='avg'))
+                                  figure=px.histogram(df, x='continent', y='lifeExp', histfunc='avg'))
                     ], width=12
                 )
             ]

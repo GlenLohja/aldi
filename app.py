@@ -22,16 +22,16 @@ sidebar = dbc.Nav(
 
 logo_url = "assets/Aldi_Süd_2017_logo.svg"
 app.layout = dbc.Container([
-    dbc.Row([
-        dbc.Col([
-            # Use a Div to contain both the text and the logo image, placing them side by side
-            html.Div([
-                html.H2("ALDI SÜD", className="me-2", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-                html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-            ], style={'display': 'flex', 'alignItems': 'center'}),
-            # This styles the Div to align items horizontally and center them vertically
-        ], width="auto", align="center"),
-    ], style={'padding-top': '10px'}, align="center"),  # no_gutters=True removes the spacing between columns
+    # dbc.Row([
+    #     dbc.Col([
+    #         
+    #         html.Div([
+    #             html.H2("ALDI SÜD", className="me-2", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+    #             html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+    #         ], style={'display': 'flex', 'alignItems': 'center'}),
+    #         # This styles the Div to align items horizontally and center them vertically
+    #     ], width="auto", align="center"),
+    # ], style={'padding-top': '10px'}, align="center"),
 
     dbc.Row(
         [

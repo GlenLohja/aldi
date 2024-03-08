@@ -2,12 +2,13 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.PULSE])
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.PULSE, dbc.icons.FONT_AWESOME])
 
 sidebar = dbc.Nav(
             [
                 dbc.NavLink(
-                    [
+                    [   
+                        html.I(className="fa-solid fa-money-bill-trend-up"),  # Bootstrap Icons example
                         html.Div(page["name"], className="ms-2"),
                     ],
                     href=page["path"],
@@ -22,23 +23,22 @@ sidebar = dbc.Nav(
 
 logo_url = "assets/Aldi_Süd_2017_logo.svg"
 app.layout = dbc.Container([
-    # dbc.Row([
-    #     dbc.Col([
-    #         
-    #         html.Div([
-    #             html.H2("ALDI SÜD", className="me-2", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-    #             html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-    #         ], style={'display': 'flex', 'alignItems': 'center'}),
-    #         # This styles the Div to align items horizontally and center them vertically
-    #     ], width="auto", align="center"),
-    # ], style={'padding-top': '10px'}, align="center"),
+    dbc.Row([
+        dbc.Col([
+            
+            html.Div([
+                html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+                html.H2("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+            ], style={'display': 'flex', 'alignItems': 'center'}),
+        ], width="auto", align="center"),
+    ], style={'padding-top': '10px'}, align="center"),
 
     dbc.Row(
         [
             dbc.Col(
                 [
                     sidebar
-                ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2),
+                ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, style={'border-right': '0.1px solid #ecf0f4'}),
 
             dbc.Col(
                 [

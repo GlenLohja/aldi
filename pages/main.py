@@ -5,130 +5,107 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 import numpy as np
+import calendar
+from datetime import datetime
+from components.card import create_card
 
 dash.register_page(__name__, path='/', name='Home')
 
-df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
-
-df = {
-    'Order Date': pd.date_range(start='2021-01-01', periods=4, freq='ME'),
-    'Sales': [200, 400, 150, 600],
-    'Profit': [100, 150, -50, 200],
-    'Profit Ratio': [0.5, 0.375, -0.33, 0.33]
-}
-
-data = {
-    'Product': ['Product A', 'Product B', 'Product C', 'Product D'],
-    'Value': [1000, 1500, 1200, 1800]
-}
-
-# Generate sample data for 31 days for two months
-np.random.seed(0)
-days = pd.date_range(start='2022-01-01', periods=31)
-profit_ratio_prev_month = np.random.uniform(low=0.1, high=0.8, size=31)  # Generating random profit ratios for previous month
-profit_ratio_curr_month = np.random.uniform(low=0.1, high=0.8, size=31)  # Generating random profit ratios for current month
-
-# Create DataFrame
-df_prev_month = pd.DataFrame({'Date': days, 'Profit Ratio': profit_ratio_prev_month})
-df_curr_month = pd.DataFrame({'Date': days, 'Profit Ratio': profit_ratio_curr_month})
+df1 = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
 
 
+def summarize_sales_data(df, year):
+    # Summarizes sales data for a given year.
+    df_year = df[df['Order Date'].dt.year == year].copy()
+    df_year['Month'] = df_year['Order Date'].dt.month
 
-card = dbc.Card(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.I(className="fa-solid fa-money-check-dollar", style={"font-size": "3rem"}),
-                    className="col-md-2 d-flex align-items-center justify-content-center",
-                ),
-                dbc.Col(
-                    dbc.CardBody(
-                        [
-                            html.H4("Total Sales", className="card-title"),
-                            html.P(
-                                "Glen.",
-                                className="card-text",
-                            ),
-                        ]
-                    ),
-                    className="col-md-10",
-                ),
-            ],
-            className="g-0 d-flex align-items-center",
-        )
-    ],
-    className="mb-3",
-    style={"maxWidth": "540px"},
+    # Group by Month for Sales and Profit Summary
+    grouped_sales = df_year.groupby('Month')[['Sales', 'Profit']].sum().reset_index()
+    grouped_sales['Month Name'] = grouped_sales['Month'].apply(lambda x: calendar.month_name[x])
+    grouped_sales['Profit Ratio'] = grouped_sales['Profit'] / grouped_sales['Sales']
+
+    # Group by Product for Quantity Summary
+    grouped_products = df_year.groupby(['Product ID', 'Product Name'])['Quantity'].sum().reset_index()
+    top_10_products = grouped_products.sort_values(by='Quantity', ascending=False).head(10)
+    
+    return grouped_sales, top_10_products
+
+grouped_sales_df, top_10_products = summarize_sales_data(df1, 2017)
+
+
+def aggregate_sales_data(df, year, month):
+    # Aggregate sales data for a given year and month.
+
+    df_filtered = df[(df['Order Date'].dt.year == year) & (df['Order Date'].dt.month == month)]
+    grouped_df = df_filtered.groupby('Order Date').agg({
+        'Sales': 'sum',
+        'Profit': 'sum',
+        'Order Date': 'count'
+    }).rename(columns={'Order Date': 'Count'}).reset_index()
+
+    grouped_df['Profit Ratio'] = grouped_df['Profit'] / grouped_df['Sales']
+    grouped_df['Day'] = grouped_df['Order Date'].dt.day
+
+    return grouped_df
+
+# current_year = datetime.now().year
+# current_month = datetime.now().month
+
+grouped_current_month_df = aggregate_sales_data(df1, 2017, 12)
+grouped_prev_month_df = aggregate_sales_data(df1, 2017, 11)
+
+sales_card = create_card(
+    "fa-solid fa-money-check-dollar",
+    "Total Sales",
+    f"{round(grouped_sales_df['Sales'].sum(), 2)}$"
 )
-card2 = dbc.Card(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.I(className="fa-solid fa-money-bill-trend-up", style={"font-size": "3rem"}),
-                    className="col-md-2 d-flex align-items-center justify-content-center",
-                ),
-                dbc.Col(
-                    dbc.CardBody(
-                        [   
-                            html.H4("Total Profit", className="card-title"),
-                            html.P(
-                                "3400$",
-                                className="card-text",
-                            ),
-                        ]
-                    ),
-                    className="col-md-10",
-                ),
-            ],
-            className="g-0 d-flex align-items-center",
-        )
-    ],
-    className="mb-3",
-    style={"maxWidth": "540px"},
+
+profit_card = create_card(
+    "fa-solid fa-money-bill-trend-up",
+    "Total Profit",
+    f"{round(grouped_sales_df['Profit'].sum(), 2)}$"
 )
-card3 = dbc.Card(
-    [
-        dbc.Row(
-            [
-                dbc.Col(
-                    html.I(className="fa-solid fa-percent", style={"font-size": "3rem"}),
-                    className="col-md-2 d-flex align-items-center justify-content-center",
-                ),
-                dbc.Col(
-                    dbc.CardBody(
-                        [   
-                            html.H4("Profit Ratio", className="card-title"),
-                            html.P(
-                                "52%",
-                                className="card-text",
-                            ),
-                        ]
-                    ),
-                    className="col-md-10",
-                ),
-            ],
-            className="g-0 d-flex align-items-center",
-        )
-    ],
-    className="mb-3",
-    style={"maxWidth": "540px"},
+
+
+profit_ratio = round(grouped_sales_df['Profit'].sum() / grouped_sales_df['Sales'].sum(), 3) * 100
+profit_ratio_card = create_card(
+    "fa-solid fa-percent",
+    "Profit Ratio",
+    f"{profit_ratio}%"
 )
+
 
 layout = html.Div([
     dbc.Row([
         dbc.Col([
-            card
+            sales_card
         ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
         dbc.Col([
-            card2
+            profit_card
         ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
         dbc.Col([
-            card3
+            profit_ratio_card
         ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
     ], style={'padding': '10px 0px'}),
 
+    # dbc.Row([
+    #     dbc.Col([
+    #         dcc.Dropdown(
+    #             id='year-dropdown',
+    #             options=[2017, 2018, 2019, 2020],
+    #             value=None,
+    #             placeholder="Select a year"
+    #         )
+    #     ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
+    #     dbc.Col([
+    #         dcc.Dropdown(
+    #             id='year-dropdown',
+    #             options=[2017, 2018, 2019, 2020],
+    #             value=None,
+    #             placeholder="Select a year"
+    #         )
+    #     ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
+    # ], style={'padding': '10px 0px'}, justify="left"),
     dbc.Row([
         dbc.Col([
             dcc.Graph(
@@ -136,20 +113,20 @@ layout = html.Div([
                 figure={
                     'data': [
                         go.Bar(
-                            x=df['Order Date'],
-                            y=df['Sales'] ,
+                            x=grouped_sales_df['Month Name'],
+                            y=grouped_sales_df['Sales'] ,
                             name='Sales',
                             marker=dict(color='#427D9D') 
                         ),
                         go.Bar(
-                            x=df['Order Date'],
-                            y=df['Profit'] ,
+                            x=grouped_sales_df['Month Name'],
+                            y=grouped_sales_df['Profit'] ,
                             name='Profit',
                             marker=dict(color='#9BBEC8') 
                         ),
                         go.Scatter(
-                            x=df['Order Date'],
-                            y=df['Profit Ratio'] ,
+                            x=grouped_sales_df['Month Name'],
+                            y=grouped_sales_df['Profit Ratio'] ,
                             yaxis='y2',
                             mode='lines+markers',
                             name='Profit Ratio',
@@ -173,16 +150,16 @@ layout = html.Div([
                 figure={
                     'data': [
                         go.Bar(
-                            x=data['Value'],
-                            y=data['Product'],
+                            x=top_10_products['Quantity'],
+                            y=top_10_products['Product ID'],
                             orientation='h',
                             marker=dict(color='#427D9D')
                         )
                     ],
                     'layout': go.Layout(
                         title='Product Value',
-                        xaxis=dict(title='Value'),
-                        yaxis=dict(title='Product'),
+                        xaxis=dict(title='Quantity'),
+                        yaxis=dict(title='Product', autorange='reversed'),
                         margin=dict(l=150),
                         height=400
                     )
@@ -197,18 +174,18 @@ layout = html.Div([
                 figure={
                     'data': [
                         go.Scatter(
-                            x=df_prev_month['Date'],
-                            y=df_prev_month['Profit Ratio'],
+                            x=grouped_prev_month_df['Order Date'],
+                            y=grouped_prev_month_df['Profit Ratio'],
                             mode='lines+markers',
                             marker=dict(color='#B5C0D0'),
-                            name='Previous week'
+                            name='Previous Month'
                         ),
                         go.Scatter(
-                            x=df_curr_month['Date'],
-                            y=df_curr_month['Profit Ratio'],
+                            x=grouped_current_month_df['Order Date'],
+                            y=grouped_current_month_df['Profit Ratio'],
                             mode='lines+markers',
                             marker=dict(color='#40679E'),
-                            name='Current Week'
+                            name='Current Month'
                         )
                     ],
                     'layout': go.Layout(
@@ -226,8 +203,8 @@ layout = html.Div([
                 figure={
                     'data': [
                         go.Scatter(
-                            x=df_curr_month['Date'],
-                            y=df_curr_month['Profit Ratio'],
+                            x=grouped_current_month_df['Order Date'],
+                            y=grouped_current_month_df['Count'],
                             mode='lines',
                             marker=dict(color='#40679E'),
                             name='Past 30 Days'

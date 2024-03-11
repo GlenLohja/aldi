@@ -5,27 +5,42 @@ import dash_bootstrap_components as dbc
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.PULSE, dbc.icons.FONT_AWESOME])
 
 sidebar = dbc.Nav(
-            [
-                dbc.NavLink(
-                    [   
-                        html.I(className="fa-solid fa-money-bill-trend-up"),  # Bootstrap Icons example
-                        html.Div(page["name"], className="ms-2"),
-                    ],
-                    href=page["path"],
-                    active="exact",
-                )
-                for page in dash.page_registry.values()
-            ],
-            vertical=True,
-            pills=True,
-            className="bg-light",
+    [
+        dbc.NavLink(
+            html.Div([
+                html.I(className="fa-solid fa-house"),
+                html.Div("Home", className="ms-2"),
+            ], className="d-flex align-items-center"),
+            href="/",
+            active="exact",
+        ),
+        dbc.NavLink(
+            html.Div([
+                html.I(className="fa-solid fa-table"),
+                html.Div("Datatable", className="ms-2"),
+            ], className="d-flex align-items-center"),
+            href="/table",
+            active="exact",
+        ),
+        dbc.NavLink(
+            html.Div([
+                html.I(className="fa-solid fa-chart-line"),
+                html.Div("Graph", className="ms-2"),
+            ], className="d-flex align-items-center"),
+            href="/graph",
+            active="exact",
+        ),
+    ],
+    vertical=True,
+    pills=True,
+    className="bg-light",
 )
+
 
 logo_url = "assets/Aldi_Süd_2017_logo.svg"
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
-            
             html.Div([
                 html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
                 html.H2("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),

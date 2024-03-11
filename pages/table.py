@@ -1,5 +1,5 @@
 import dash
-from dash import dcc, html, dash_table, callback, Output, Input, State
+from dash import dcc, html, dash_table, callback, Output, Input, State, callback_context
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -14,8 +14,11 @@ df['Order Date'] = df['Order Date'].dt.strftime('%Y-%m-%d')
 df['Ship Date'] = df['Ship Date'].dt.strftime('%Y-%m-%d')
 df = df.sort_values(by='Order Date', ascending=False)
 
+
 unique_countries = df['Country'].unique()
 country_options = [{'label': country, 'value': country} for country in unique_countries]
+
+# df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
 
 layout = html.Div(
     [   
@@ -61,7 +64,7 @@ layout = html.Div(
                 data=df.to_dict('records'),
                 columns=[{"name": i, "id": i} for i in df.columns],
                 page_size=10,
-                fixed_rows={'headers': True},
+                # fixed_rows={'headers': True},
                 style_cell={'textAlign': 'left'},
             )
         ]),
@@ -73,7 +76,7 @@ layout = html.Div(
             dbc.Col(dbc.Input(id='quantity-id', placeholder='Enter Quantity')),
             dbc.Col(dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')),
             dbc.Col(dbc.Button('Add', id='button-add', n_clicks=0))
-        ]),
+        ],  style={'padding': '20px 0px'}),
 
 
     ]
@@ -124,13 +127,18 @@ def set_cities_options(selected_country, selected_state):
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
+    ctx = callback_context
+    triggered_input = ctx.triggered[0]['prop_id'].split('.')[0]
+
     filtered_df = df.copy()
 
-    if selected_country:
+    if selected_country and 'country-dropdown' in triggered_input:
         filtered_df = filtered_df[filtered_df['Country'] == selected_country]
-    if selected_state:
+
+    if selected_state and 'state-dropdown' in triggered_input:
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
-    if selected_city:
+
+    if selected_city and 'city-dropdown' in triggered_input:
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
 
     if filtered_df.empty:

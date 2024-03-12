@@ -11,7 +11,7 @@ from components.card import create_card
 
 dash.register_page(__name__, path='/', name='Home')
 
-df1 = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
+df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
 
 
 def summarize_sales_data(df, year):
@@ -30,7 +30,7 @@ def summarize_sales_data(df, year):
     
     return grouped_sales, top_10_products
 
-grouped_sales_df, top_10_products = summarize_sales_data(df1, 2017)
+grouped_sales_df, top_10_products = summarize_sales_data(df, 2017)
 
 
 def aggregate_sales_data(df, year, month):
@@ -51,8 +51,8 @@ def aggregate_sales_data(df, year, month):
 # current_year = datetime.now().year
 # current_month = datetime.now().month
 
-grouped_current_month_df = aggregate_sales_data(df1, 2017, 12)
-grouped_prev_month_df = aggregate_sales_data(df1, 2017, 11)
+grouped_current_month_df = aggregate_sales_data(df, 2017, 12)
+grouped_prev_month_df = aggregate_sales_data(df, 2017, 11)
 
 sales_card = create_card(
     "fa-solid fa-money-check-dollar",
@@ -79,13 +79,13 @@ layout = html.Div([
     dbc.Row([
         dbc.Col([
             sales_card
-        ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
+        ], xs=12, sm=12, md=4, lg=4, xl=4, xxl=4, align="center"),
         dbc.Col([
             profit_card
-        ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
+        ], xs=12, sm=12, md=4, lg=4, xl=4, xxl=4, align="center"),
         dbc.Col([
             profit_ratio_card
-        ], xs=6, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
+        ], xs=12, sm=12, md=4, lg=4, xl=4, xxl=4, align="center"),
     ], style={'padding': '10px 0px'}),
 
     # dbc.Row([

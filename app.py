@@ -43,7 +43,7 @@ app.layout = dbc.Container([
         dbc.Col([
             html.Div([
                 html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-                html.H2("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+                html.H3("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
             ], style={'display': 'flex', 'alignItems': 'center'}),
         ], width="auto", align="center"),
     ], style={'padding-top': '10px'}, align="center"),
@@ -53,12 +53,12 @@ app.layout = dbc.Container([
             dbc.Col(
                 [
                     sidebar
-                ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, style={'border-right': '0.1px solid #ecf0f4'}),
+                ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2, style={'border-right': '0.1px solid #ecf0f4'}),
 
             dbc.Col(
                 [
                     dash.page_container
-                ], xs=8, sm=8, md=10, lg=10, xl=10, xxl=10)
+                ], xs=12, sm=12, md=10, lg=10, xl=10, xxl=10)
         ]
     )
 ], fluid=True)

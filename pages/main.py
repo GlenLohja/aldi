@@ -223,17 +223,3 @@ layout = html.Div([
 
     ], style={'padding': '10px 0px'}),
 ])
-
-
-
-# @callback(
-#     Output('line-fig', 'figure'),
-#     Input('cont-choice', 'value')
-# )
-# def update_graph(value):
-#     if value is None:
-#         fig = px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
-#     else:
-#         dff = df[df.continent==value]
-#         fig = px.histogram(dff, x='country', y='lifeExp', histfunc='avg')
-#     return fig

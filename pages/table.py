@@ -18,7 +18,7 @@ df = df.sort_values(by='Order Date', ascending=False)
 unique_countries = df['Country'].unique()
 country_options = [{'label': country, 'value': country} for country in unique_countries]
 
-# df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
+df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
 
 layout = html.Div(
     [   
@@ -64,7 +64,7 @@ layout = html.Div(
                 data=df.to_dict('records'),
                 columns=[{"name": i, "id": i} for i in df.columns],
                 page_size=10,
-                # fixed_rows={'headers': True},
+                style_as_list_view=True,
                 style_cell={'textAlign': 'left'},
             )
         ]),

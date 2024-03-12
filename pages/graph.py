@@ -5,6 +5,8 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
 from datetime import date
+from dash.exceptions import PreventUpdate
+
 
 dash.register_page(__name__, name='Graphs')
 
@@ -19,10 +21,11 @@ df_merged = pd.merge(orders_df, returns_df, on='Order ID', how='left')
 start_date, end_date = '1/1/2017', '12/31/2017'
 
 def filter_by_date(df, start_date, end_date):
+    print(start_date)
+    print(end_date)
 
     filtered_orders = df[(df['Order Date'] >= start_date) & (df['Order Date'] <= end_date)]
     return filtered_orders
-
 
 def filter_by_granularity(df, granularity_option):
 
@@ -37,8 +40,6 @@ def filter_by_granularity(df, granularity_option):
     else:
         return df
 
-
-
     grouped = df.groupby(group_keys).agg(
         Date=('Order Date', 'min'),
         Days_to_Ship=('Days to Ship', 'mean'),
@@ -46,6 +47,7 @@ def filter_by_granularity(df, granularity_option):
         Profit=('Profit', 'sum'),
         Quantity=('Quantity', 'sum'),
         Sales=('Sales', 'sum'),
+        Returned=('Returned', lambda x: (x == 'Yes').sum()),
         Ship_mode=('Ship Mode', 'count')
     )
     grouped['Profit Ratio'] = grouped['Profit'] / grouped['Sales']
@@ -56,11 +58,6 @@ def filter_by_granularity(df, granularity_option):
         grouped = grouped.sort_values(by='Date').reset_index(drop=True)
 
     return grouped
-
-
-df_filtered_date = filter_by_date(df_merged, start_date, end_date)
-df = filter_by_granularity(df_filtered_date, 'month')
-
 
 
 def get_bubble_chart_data(df, yaxis, xaxis, category):
@@ -90,9 +87,6 @@ def get_bubble_chart_data(df, yaxis, xaxis, category):
         f"{category} Count": grouped_df['Row ID'].tolist(),
         category: grouped_df[category].tolist(),
     })
-
-df1 = get_bubble_chart_data(df_filtered_date, 'Sales', 'Profit', 'Ship Mode')
-
 
 axis_options = [
     {'label': 'Days to Ship', 'value': 'Days to Ship'},
@@ -150,46 +144,6 @@ layout = html.Div(
 
                         dcc.Graph(
                             id='timeline-graph',
-                            figure={
-                                'data': [
-                                    go.Scatter(x=df['Date'], y=df['Days_to_Ship'], name='Days to Ship', mode='lines', marker=dict(color='#2CA58D')),
-                                    go.Scatter(x=df['Date'], y=df['Discount'], name='Discount', mode='lines', yaxis="y2", marker=dict(color='#B7C9F2')),
-                                    go.Scatter(x=df['Date'], y=df['Profit'], name='Profit', mode='lines', yaxis="y3", marker=dict(color='#474F7A')),
-                                    go.Scatter(x=df['Date'], y=df['Profit Ratio'], name='Profit Ratio', mode='lines', yaxis="y4", marker=dict(color='#81689D')),
-                                    go.Scatter(x=df['Date'], y=df['Quantity'], name='Quantity', mode='lines', yaxis="y5", marker=dict(color='#FFD0EC')),
-                                    # go.Scatter(x=df['Date'], y=df['Returns'], name='Returns', mode='lines'),
-                                    go.Scatter(x=df['Date'], y=df['Sales'], name='Sales', mode='lines', yaxis="y6", marker=dict(color='#1F2544')),
-                                ],
-                                'layout': go.Layout(
-                                    title='Timeline Graph',
-                                    # xaxis=dict(title='Date'),
-                                    yaxis=dict(
-                                        title="Days to Ship",
-                                        titlefont=dict(color="#2CA58D"),
-                                        tickfont=dict(color="#2CA58D"),
-                                    ),
-                                    yaxis2=dict(
-                                        title="Discount",
-                                        overlaying="y",
-                                        side="right",
-                                        titlefont=dict(color="#B7C9F2"),
-                                        tickfont=dict(color="#B7C9F2"),
-                                    ),
-                                    yaxis3=dict(title="Profit", anchor="free", overlaying="y", autoshift=True,titlefont=dict(color="#474F7A"),tickfont=dict(color="#474F7A")),
-                                    yaxis4=dict(
-                                        title="Profit Ratio",
-                                        anchor="free",
-                                        overlaying="y",
-                                        side="right",
-                                        autoshift=True,
-                                        titlefont=dict(color="#81689D"),
-                                        tickfont=dict(color="#81689D"),
-                                    ),
-                                    yaxis5=dict(title="Quantity", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#FFD0EC"),tickfont=dict(color="#FFD0EC")),
-                                    yaxis6=dict(title="Sales", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#0A2342"),tickfont=dict(color="#0A2342")),
-                                    legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)', orientation='h')  # Customize legend border
-                                )
-                            }
                         )
                     ], className="timeline-div")
                 ], xs=12, sm=12, md=6, lg=6, xl=6, xxl=6,
@@ -226,29 +180,6 @@ layout = html.Div(
                         ], style={'padding-top': '15px'}, justify="end"),
                         dcc.Graph(
                             id='bubblechart',
-                            figure={
-                                'data': [
-                                    go.Scatter(
-                                        x=df1['Sales'], 
-                                        y=df1['Profit'],
-                                        mode='markers', 
-                                        marker=dict(
-                                            size=df1['Ship Mode Count'],
-                                            # color=df1['Ship Mode'],
-                                            sizeref= 2.*max(df1['Ship Mode Count'])/(15**2),
-                                            sizemin=4,
-                                        ),
-                                        text=df1['Ship Mode Count'],
-                                        hoverinfo='text'
-                                    )
-                                ],
-                                'layout': go.Layout(
-                                    xaxis=dict(title='Sales'),
-                                    yaxis=dict(title='Profit'),
-                                    margin=dict(l=100, r=20, t=70, b=70), # Adjust margins to fit your layout
-                                    # height=600 # Adjust height if needed
-                                )
-                            }
                         )
                     ])
                 ], className="bubble-chart-div", xs=12, sm=12, md=6, lg=6, xl=6, xxl=6
@@ -283,6 +214,8 @@ def set_xaxis_options(selected_yaxis):
     ]
 )
 def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_date):
+    if start_date is None or end_date is None or xaxis_val is None or yaxis_val is None or breakdown_val is None:
+        raise PreventUpdate
 
     filter_date = filter_by_date(df_merged, start_date, end_date)
     df_filtered =  get_bubble_chart_data(filter_date, xaxis_val, yaxis_val, breakdown_val)
@@ -294,7 +227,7 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
                 mode='markers',
                 marker=dict(
                     size=df_filtered[f'{breakdown_val} Count'],
-                    sizeref=2.*max(df_filtered[f'{breakdown_val} Count'])/(15**2),
+                    sizeref=2. * max(df_filtered.get(f'{breakdown_val} Count', []), default=0) / (15**2),
                     sizemin=4,
                 ),
                 text=df_filtered[f'{breakdown_val} Count'],
@@ -317,19 +250,26 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
     Input('granularity-dropdown', 'value')]
 )
 def update_timeline_chart(start_date, end_date, granularity):
+    if start_date is None or end_date is None or granularity is None:
+        raise PreventUpdate
+
 
     filter_date = filter_by_date(df_merged, start_date, end_date)
-    updated_Df = filter_by_granularity(filter_date, granularity)
+    updated_df = filter_by_granularity(filter_date, granularity)
+    
+    mode = 'lines'
+    if len(updated_df) == 1:
+        mode += '+markers'
 
     figure={
         'data': [
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Days_to_Ship'], name='Days to Ship', mode='lines', marker=dict(color='#2CA58D')),
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Discount'], name='Discount', mode='lines', yaxis="y2", marker=dict(color='#B7C9F2')),
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Profit'], name='Profit', mode='lines', yaxis="y3", marker=dict(color='#474F7A')),
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Profit Ratio'], name='Profit Ratio', mode='lines', yaxis="y4", marker=dict(color='#81689D')),
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Quantity'], name='Quantity', mode='lines', yaxis="y5", marker=dict(color='#FFD0EC')),
-            # go.Scatter(x=df['Date'], y=df['Returns'], name='Returns', mode='lines'),
-            go.Scatter(x=updated_Df['Date'], y=updated_Df['Sales'], name='Sales', mode='lines', yaxis="y6", marker=dict(color='#1F2544')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode=mode, marker=dict(color='#2CA58D')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, yaxis="y2", marker=dict(color='#B7C9F2')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', mode=mode, yaxis="y3", marker=dict(color='#474F7A')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, yaxis="y4", marker=dict(color='#81689D')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Quantity'], name='Quantity', mode=mode, yaxis="y5", marker=dict(color='#FFD0EC')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Returned'], name='Returns', yaxis="y6", mode=mode),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', mode=mode, yaxis="y7", marker=dict(color='#1F2544')),
         ],
         'layout': go.Layout(
             title='Timeline Graph',
@@ -346,7 +286,7 @@ def update_timeline_chart(start_date, end_date, granularity):
                 titlefont=dict(color="#B7C9F2"),
                 tickfont=dict(color="#B7C9F2"),
             ),
-            yaxis3=dict(title="Profit", anchor="free", overlaying="y", autoshift=True,titlefont=dict(color="#474F7A"),tickfont=dict(color="#474F7A")),
+            yaxis3=dict(title="Profit", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#474F7A"),tickfont=dict(color="#474F7A")),
             yaxis4=dict(
                 title="Profit Ratio",
                 anchor="free",
@@ -357,7 +297,8 @@ def update_timeline_chart(start_date, end_date, granularity):
                 tickfont=dict(color="#81689D"),
             ),
             yaxis5=dict(title="Quantity", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#FFD0EC"),tickfont=dict(color="#FFD0EC")),
-            yaxis6=dict(title="Sales", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#0A2342"),tickfont=dict(color="#0A2342")),
+            yaxis6=dict(title="Returns", anchor="free", overlaying="y", side="right", autoshift=True, titlefont=dict(color="#1F2544"),tickfont=dict(color="#1F2544")),
+            yaxis7=dict(title="Sales", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#0A2342"),tickfont=dict(color="#0A2342")),
             legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)', orientation='h')  # Customize legend border
         )
     }

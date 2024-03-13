@@ -40,7 +40,8 @@ layout = html.Div(
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle("Add Order")),
-                dbc.ModalBody(
+                dbc.ModalBody([
+                    html.P(children="", id="add-order-error"),       
                     dbc.Row([
                         dbc.Col([
                             dbc.Label('Order ID'),
@@ -63,7 +64,7 @@ layout = html.Div(
                             dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')
                         ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
                     ],  style={'padding': '20px 0px'}),
-                ),
+                ]),
                 dbc.ModalFooter([
                     dbc.Button(
                         "Close", id="close", className="ms-auto", n_clicks=0
@@ -164,16 +165,16 @@ def set_cities_options(selected_country, selected_state):
     return []
 
 @callback(
-    Output("modal", "is_open"),
+    Output("modal", "is_open", allow_duplicate=True),
     [
         Input("open", "n_clicks"), 
         Input("close", "n_clicks"), 
-        Input("button-add", "n_clicks")
     ],
     [State("modal", "is_open")],
+    prevent_initial_call=True
 )
-def toggle_modal(n1, n2, n3, is_open):
-    if n1 or n2 or n3:
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
         return not is_open
     return is_open
 
@@ -211,7 +212,9 @@ def update_table(selected_country, selected_state, selected_city):
     Output('quantity-id', 'value'),
     Output('discount-id', 'value'),
     Output('status-div', 'children'),
-    Output('alert-clear-interval', 'disabled')],
+    Output('add-order-error', 'children'),
+    Output('alert-clear-interval', 'disabled'),
+    Output("modal", "is_open")],
     [Input('button-add', 'n_clicks')],
     [State('order-id', 'value'),
     State('product-id', 'value'),
@@ -223,13 +226,13 @@ def update_table(selected_country, selected_state, selected_city):
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id, existing_data):
     if n_clicks > 0:
         if not order_id or not product_id:
-            error_alert = dbc.Alert("Order ID and Product ID are required.", color="danger")
-            return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, error_alert, True
+            error = "Order ID and Product ID are required."
+            return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
         
         for record in existing_data:
             if record['Order ID'] == order_id and record['Product ID'] == product_id:
-                error_alert = dbc.Alert("This order and product combination already exists.", color="danger")
-                return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, error_alert, True
+                error = "This order and product combination already exists."
+                return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
         new_entry = {
             'Order ID': order_id,
@@ -241,6 +244,6 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
         }
         existing_data.insert(0, new_entry)
         success_alert = dbc.Alert("Entry added successfully!", color="success")
-        return existing_data, None, None, None, None, None, success_alert, False
+        return existing_data, None, None, None, None, None, success_alert, "", False, False
 
-    return existing_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, True
+    return existing_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, "", True, False

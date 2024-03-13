@@ -2,7 +2,6 @@ import dash
 from dash import dcc, html, dash_table, callback, Output, Input, State
 import pandas as pd
 import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
 from datetime import datetime
 
 
@@ -108,7 +107,7 @@ layout = html.Div(
         dcc.Interval(
             id='alert-clear-interval',
             interval=3000,
-            n_intervals = 0,
+            n_intervals=0,
             disabled=True
         ),
 
@@ -156,6 +155,7 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
+
 @callback(
     [Output('state-dropdown', 'options'),
      Output('state-dropdown', 'value')],
@@ -181,11 +181,12 @@ def set_cities_options(selected_country, selected_state):
         return [{'label': city, 'value': city} for city in cities], None
     return [], None
 
+
 @callback(
     Output('records-datatable', 'data', allow_duplicate=True),
     [Input('country-dropdown', 'value'),
      Input('state-dropdown', 'value'),
-     Input('city-dropdown', 'value'),],
+     Input('city-dropdown', 'value')],
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
@@ -202,24 +203,31 @@ def update_table(selected_country, selected_state, selected_city):
 
     return filtered_df.to_dict('records') if not filtered_df.empty else df.to_dict('records')
 
+
 @callback(
-    [Output('records-datatable', 'data'),
-    Output('order-id', 'value'),
-    Output('product-id', 'value'),
-    Output('customer-id', 'value'),
-    Output('quantity-id', 'value'),
-    Output('discount-id', 'value'),
-    Output('status-div', 'children'),
-    Output('add-order-error', 'children'),
-    Output('alert-clear-interval', 'disabled'),
-    Output("modal", "is_open")],
-    [Input('button-add', 'n_clicks')],
-    [State('order-id', 'value'),
-    State('product-id', 'value'),
-    State('customer-id', 'value'),
-    State('quantity-id', 'value'),
-    State('discount-id', 'value'),
-    State('records-datatable', 'data')]
+    [
+        Output('records-datatable', 'data'),
+        Output('order-id', 'value'),
+        Output('product-id', 'value'),
+        Output('customer-id', 'value'),
+        Output('quantity-id', 'value'),
+        Output('discount-id', 'value'),
+        Output('status-div', 'children'),
+        Output('add-order-error', 'children'),
+        Output('alert-clear-interval', 'disabled'),
+        Output("modal", "is_open")
+    ],
+    [
+        Input('button-add', 'n_clicks')
+    ],
+    [
+        State('order-id', 'value'),
+        State('product-id', 'value'),
+        State('customer-id', 'value'),
+        State('quantity-id', 'value'),
+        State('discount-id', 'value'),
+        State('records-datatable', 'data')
+    ]
 )
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id, existing_data):
     if n_clicks > 0:

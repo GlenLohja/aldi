@@ -1,6 +1,5 @@
 import dash
 from dash import dcc, html, callback, Output, Input
-import plotly.express as px
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
@@ -20,9 +19,11 @@ df_merged = pd.merge(orders_df, returns_df, on='Order ID', how='left')
 # Pre-set start date and end date
 start_date, end_date = '1/1/2017', '12/31/2017'
 
+
 def filter_by_date(df, start_date, end_date):
     filtered_orders = df[(df['Order Date'] >= start_date) & (df['Order Date'] <= end_date)]
     return filtered_orders
+
 
 def filter_by_granularity(df, granularity_option):
 
@@ -48,7 +49,6 @@ def filter_by_granularity(df, granularity_option):
         Ship_mode=('Ship Mode', 'count')
     )
     grouped['Profit Ratio'] = grouped['Profit'] / grouped['Sales']
-    
 
     if granularity_option == 'week':
         grouped['Date'] = grouped['Date'].dt.to_period('W').dt.start_time
@@ -85,6 +85,7 @@ def get_bubble_chart_data(df, yaxis, xaxis, category):
         f"{category} Count": grouped_df['Row ID'].tolist(),
         category: grouped_df[category].tolist(),
     })
+
 
 axis_options = [
     {'label': 'Days to Ship', 'value': 'Days to Ship'},
@@ -186,12 +187,14 @@ layout = html.Div(
     ]
 )
 
+
 @callback(
     Output('yaxis-dropdown', 'options'),
     [Input('xaxis-dropdown', 'value')]
 )
 def set_yaxis_options(selected_xaxis):
     return [option for option in axis_options if option['value'] != selected_xaxis]
+
 
 @callback(
     Output('xaxis-dropdown', 'options'),
@@ -231,7 +234,6 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
     elif yaxis_val == 'Profit Ratio' or yaxis_val == 'Discount':
         y_format = '%{y:.2f}%'
 
-
     fig = {
         'data': [
             go.Scatter(
@@ -257,6 +259,7 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
     }
     return fig
 
+
 @callback(
     Output('timeline-graph', 'figure'),
     [Input('start-date', 'date'),
@@ -266,7 +269,6 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
 def update_timeline_chart(start_date, end_date, granularity):
     if start_date is None or end_date is None or granularity is None:
         raise PreventUpdate
-
 
     filter_date = filter_by_date(df_merged, start_date, end_date)
     updated_df = filter_by_granularity(filter_date, granularity)

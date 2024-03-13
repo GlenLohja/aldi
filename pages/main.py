@@ -1,12 +1,9 @@
 import dash
 from dash import dcc, html, callback, Output, Input
-import plotly.express as px
 import pandas as pd
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
-import numpy as np
 import calendar
-from datetime import datetime
 from components.card import create_card
 
 dash.register_page(__name__, path='/', name='Home')
@@ -30,6 +27,7 @@ def summarize_sales_data(df, year):
     
     return grouped_sales, top_10_products
 
+
 grouped_sales_df, top_10_products = summarize_sales_data(df, 2017)
 
 
@@ -50,6 +48,7 @@ def aggregate_sales_data(df, year, month):
 
 # current_year = datetime.now().year
 # current_month = datetime.now().month
+
 
 grouped_current_month_df = aggregate_sales_data(df, 2017, 12)
 grouped_prev_month_df = aggregate_sales_data(df, 2017, 11)
@@ -87,25 +86,6 @@ layout = html.Div([
             profit_ratio_card
         ], xs=12, sm=12, md=4, lg=4, xl=4, xxl=4, align="center"),
     ], style={'padding': '10px 0px'}),
-
-    # dbc.Row([
-    #     dbc.Col([
-    #         dcc.Dropdown(
-    #             id='year-dropdown',
-    #             options=[2017, 2018, 2019, 2020],
-    #             value=None,
-    #             placeholder="Select a year"
-    #         )
-    #     ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
-    #     dbc.Col([
-    #         dcc.Dropdown(
-    #             id='year-dropdown',
-    #             options=[2017, 2018, 2019, 2020],
-    #             value=None,
-    #             placeholder="Select a year"
-    #         )
-    #     ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
-    # ], style={'padding': '10px 0px'}, justify="left"),
     dbc.Row([
         dbc.Col([
             dcc.Graph(
@@ -114,19 +94,19 @@ layout = html.Div([
                     'data': [
                         go.Bar(
                             x=grouped_sales_df['Month Name'],
-                            y=grouped_sales_df['Sales'] ,
+                            y=grouped_sales_df['Sales'],
                             name='Sales',
                             marker=dict(color='#427D9D') 
                         ),
                         go.Bar(
                             x=grouped_sales_df['Month Name'],
-                            y=grouped_sales_df['Profit'] ,
+                            y=grouped_sales_df['Profit'],
                             name='Profit',
                             marker=dict(color='#9BBEC8') 
                         ),
                         go.Scatter(
                             x=grouped_sales_df['Month Name'],
-                            y=grouped_sales_df['Profit Ratio'] ,
+                            y=grouped_sales_df['Profit Ratio'],
                             yaxis='y2',
                             mode='lines+markers',
                             name='Profit Ratio',
@@ -139,7 +119,8 @@ layout = html.Div([
                         yaxis=dict(title='Amount', side='left', rangemode='tozero'),
                         yaxis2=dict(title='Ratio %', side='right', overlaying='y', rangemode='tozero', tickformat='.0%'),
                         barmode='group',
-                        legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)', orientation='h')  # Customize legend border
+                        legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)',
+                                    orientation='h')
                     )
                 }
             )

@@ -1,5 +1,5 @@
 import dash
-from dash import html, dcc
+from dash import html
 import dash_bootstrap_components as dbc
 
 external_stylesheets = [
@@ -9,7 +9,7 @@ external_stylesheets = [
 ]
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=external_stylesheets)
-
+server = app.server
 logo_url = "assets/Aldi_Süd_2017_logo.svg"
 
 sidebar = dbc.Nav(
@@ -18,7 +18,8 @@ sidebar = dbc.Nav(
             dbc.Col([
                 html.Div([
                     html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-                    html.H3("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+                    html.H3("ALDI SÜD", className="company",
+                            style={'display': 'inline-block', 'verticalAlign': 'middle'}),
                 ], style={'display': 'flex', 'alignItems': 'center'}),
             ], width="auto", align="center"),
         ], style={'margin-bottom': '25px'}, align="center"),
@@ -66,7 +67,7 @@ app.layout = dbc.Container([
             dbc.Col(
                 [
                     dash.page_container
-                ], xs=12, sm=12, md=10, lg=10, xl=10, xxl=10, style={'margin-top':'60px'})
+                ], xs=12, sm=12, md=10, lg=10, xl=10, xxl=10, style={'margin-top': '60px'})
         ]
     )
 ], fluid=True)

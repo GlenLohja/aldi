@@ -11,7 +11,6 @@ h1, h2, h3 {
     margin-top: 15px;
 }
 
-
 .nav-link {
     border-radius: 10px;
     color: #74808c!important;
@@ -67,7 +66,7 @@ h1, h2, h3 {
     border-radius: 0.25rem;
 }
 .form-label {
-    margin-bottom: 0rem;
+    margin-bottom: 0;
 }
 .form-control {
     border-radius: 10px;
@@ -78,11 +77,11 @@ h1, h2, h3 {
 }
 
 .modal-body {
-    margin: 0px 10px;
+    margin: 0 10px;
 }
 .Select-control {
     border-radius: 10px!important;
-    border: 1.1px solid #d9dadb;
+    border: 1px solid #d9dadb;
 }
 
 .Select-value {
@@ -90,7 +89,7 @@ h1, h2, h3 {
 }
 .SingleDatePickerInput {
     width: 100%;
-    border: 0px;
+    border: 0;
 }
 .SingleDatePicker, #start-date, #end-date {
     width: 100%;
@@ -102,7 +101,6 @@ h1, h2, h3 {
 }
 
 .DateInput_input, .DateInput_input_1 {
-    /* line-height: calc(1.5em + 0.75rem); */
     height: calc(1.5em + 0.75rem + 2px);
     font-size: 0.9375rem;
     font-weight: 400;
@@ -116,9 +114,9 @@ h1, h2, h3 {
 
 .filterDiv {
     background-color: #fff;
-    padding: 25px 0px 0px 10px;
-    border-radius: 25px 25px 0px 0px;
-    box-shadow: rgba(145, 158, 171, 0.08) 0px 0px 2px 0px, rgba(145, 158, 171, 0.08) 0px 12px
+    padding: 25px 0 0 10px;
+    border-radius: 25px 25px 0 0;
+    box-shadow: rgba(145, 158, 171, 0.08) 0 0 2px 0, rgba(145, 158, 171, 0.08) 0 12px
 }
 
 /* primary button */
@@ -145,7 +143,7 @@ h1, h2, h3 {
 
 #add-order-error {
     color: #FF004D;
-    margin: 0px;
+    margin: 0;
 }
 .alert-success{
     border-radius: 15px;

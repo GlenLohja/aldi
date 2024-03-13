@@ -1,9 +1,9 @@
 #records-datatable {
     background-color: #fff;
-    padding: 0px 0px 25px 0px;
+    padding: 0 0 25px 0;
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
-    box-shadow: rgba(145, 158, 171, 0.08) 0px 0px 2px 0px, rgba(145, 158, 171, 0.08) 0px 1px;
+    box-shadow: rgba(145, 158, 171, 0.08) 0 0 2px 0, rgba(145, 158, 171, 0.08) 0 1px;
 }
 
 .previous-next-container {
@@ -25,14 +25,13 @@
 }
 
 .column-header-name {
-    /* color: #ffffff; */
     text-align: left;
 }
 
 .dash-header {
     padding: 20px 15px!important;
     background-color: #f9fafb!important;
-    border: 0px !important
+    border: 0 !important
 }
 
 .cell-table tbody tr {
@@ -42,11 +41,11 @@
 .cell-table tbody tr td  {
     padding: 17px!important;
     border-bottom: 1px solid #ebe7e7!important;
-    border-top: 0px!important;
+    border-top: 0!important;
 }
 
 
 .cell-table tbody tr:last-of-type {
-    border-bottom: 0px solid #f4f6f8;
+    border-bottom: 0 solid #f4f6f8;
 }
 

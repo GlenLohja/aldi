@@ -1,11 +1,20 @@
+#records-datatable {
+    background-color: #fff;
+    padding: 0px;
+}
+
+.table-div {
+    margin: 20px 50px;
+}
+
 .cell-table {
     border-collapse: collapse;
     margin: 25px 0;
     font-size: 0.9em;
-    font-family: sans-serif;
     min-width: 400px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    color: #000;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); */
+    border: 0.2px solid #f9fafb;
+    color: #4e545e;
     border-radius: 25px;
 }
 
@@ -15,8 +24,8 @@
 }
 
 .dash-header {
-    padding: 12px 15px!important;
-    background-color: #f4f6f8!important;
+    padding: 20px 15px!important;
+    background-color: #f9fafb!important;
     border: 0px !important
 }
 
@@ -25,10 +34,13 @@
 }
 
 .cell-table tbody tr td  {
-    padding: 15px!important;
+    padding: 17px!important;
+    border-bottom: 1px solid #ebe7e7!important;
+    border-top: 0px!important;
 }
 
 
 .cell-table tbody tr:last-of-type {
     border-bottom: 0px solid #f4f6f8;
 }
+

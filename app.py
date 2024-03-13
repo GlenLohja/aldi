@@ -2,10 +2,28 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, use_pages=True, external_stylesheets=[dbc.themes.PULSE, dbc.icons.FONT_AWESOME])
+external_stylesheets = [
+    'https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&display=swap',
+    dbc.themes.PULSE,
+    dbc.icons.FONT_AWESOME
+]
+
+app = dash.Dash(__name__, use_pages=True, external_stylesheets=external_stylesheets)
+
+logo_url = "assets/Aldi_Süd_2017_logo.svg"
 
 sidebar = dbc.Nav(
-    [
+    [   
+        dbc.Row([
+            dbc.Col([
+                html.Div([
+                    html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+                    html.H3("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
+                ], style={'display': 'flex', 'alignItems': 'center'}),
+            ], width="auto", align="center"),
+        ], style={'margin-bottom': '25px'}, align="center"),
+
+
         dbc.NavLink(
             html.Div([
                 html.I(className="fa-solid fa-house"),
@@ -36,17 +54,7 @@ sidebar = dbc.Nav(
     className="bg-light",
 )
 
-
-logo_url = "assets/Aldi_Süd_2017_logo.svg"
 app.layout = dbc.Container([
-    dbc.Row([
-        dbc.Col([
-            html.Div([
-                html.Img(src=logo_url, height="75px", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-                html.H3("ALDI SÜD", className="company", style={'display': 'inline-block', 'verticalAlign': 'middle'}),
-            ], style={'display': 'flex', 'alignItems': 'center'}),
-        ], width="auto", align="center"),
-    ], style={'padding-top': '10px'}, align="center"),
 
     dbc.Row(
         [
@@ -58,7 +66,7 @@ app.layout = dbc.Container([
             dbc.Col(
                 [
                     dash.page_container
-                ], xs=12, sm=12, md=10, lg=10, xl=10, xxl=10)
+                ], xs=12, sm=12, md=10, lg=10, xl=10, xxl=10, style={'margin-top':'60px'})
         ]
     )
 ], fluid=True)

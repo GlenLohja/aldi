@@ -1,5 +1,5 @@
 import dash
-from dash import dcc, html, dash_table, callback, Output, Input, State, callback_context
+from dash import dcc, html, dash_table, callback, Output, Input, State
 import pandas as pd
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -18,10 +18,64 @@ df = df.sort_values(by='Order Date', ascending=False)
 unique_countries = df['Country'].unique()
 country_options = [{'label': country, 'value': country} for country in unique_countries]
 
-df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
+# df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
 
 layout = html.Div(
     [   
+        dbc.Row([
+            dbc.Col([
+                html.H2("Order History"),
+            ], xs=12, sm=12, md=3, lg=6, xl=6, xxl=6, align="center"),
+
+            dbc.Col([
+                dbc.Button([
+                    html.I(className="fa-solid fa-plus"),
+                    " Add Order"
+                ], id='open', n_clicks=0)
+            ], xs=12, sm=12, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
+        ], style={'padding-bottom': '20px'}, align="start"),
+        
+        html.Div(id='status-div'),
+        
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Add Order")),
+                dbc.ModalBody(
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Label('Order ID'),
+                            dbc.Input(id='order-id', placeholder='Enter Order ID')
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
+                        dbc.Col([
+                            dbc.Label('Product ID'),
+                            dbc.Input(id='product-id', placeholder='Enter Product ID')
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
+                        dbc.Col([
+                            dbc.Label('Customer ID'),
+                            dbc.Input(id='customer-id', placeholder='Enter Customer ID')
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
+                        dbc.Col([
+                            dbc.Label('Quantity'),
+                            dbc.Input(id='quantity-id', placeholder='Enter Quantity')
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
+                        dbc.Col([
+                            dbc.Label('Discount'),
+                            dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
+                    ],  style={'padding': '20px 0px'}),
+                ),
+                dbc.ModalFooter([
+                    dbc.Button(
+                        "Close", id="close", className="ms-auto", n_clicks=0
+                    ),
+                    dbc.Button(
+                        "Add Order", id='button-add', n_clicks=0
+                    )
+                ]),
+            ],
+            id="modal",
+            is_open=False,
+        ),
         dbc.Row([
             dbc.Col([
                 dcc.Dropdown(
@@ -30,7 +84,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a country"
                 )
-            ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
             dbc.Col([
                 dcc.Dropdown(
                     id='state-dropdown',
@@ -38,7 +92,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a state"
                 )
-            ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
             dbc.Col([
                 dcc.Dropdown(
                     id='city-dropdown',
@@ -46,8 +100,9 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a city"
                 )
-            ], xs=4, sm=4, md=2, lg=2, xl=2, xxl=2, align="center")
-        ], style={'padding': '10px 0px'}, justify="end"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+
+        ], className="filterDiv", justify="start"),
 
         dcc.Interval(
             id='alert-clear-interval',
@@ -55,8 +110,6 @@ layout = html.Div(
             n_intervals = 0,
             disabled=True
         ),
-        html.Div(id='status-div'),
-
 
         dbc.Row([
             dash_table.DataTable(
@@ -65,21 +118,13 @@ layout = html.Div(
                 columns=[{"name": i, "id": i} for i in df.columns],
                 page_size=10,
                 style_as_list_view=True,
+                style_table={'overflowX': 'auto'},
                 style_cell={'textAlign': 'left'},
+                markdown_options={"html": True}
             )
         ]),
 
-        dbc.Row([
-            dbc.Col(dbc.Input(id='order-id', placeholder='Enter Order ID')),
-            dbc.Col(dbc.Input(id='product-id', placeholder='Enter Product ID')),
-            dbc.Col(dbc.Input(id='customer-id', placeholder='Enter Customer ID')),
-            dbc.Col(dbc.Input(id='quantity-id', placeholder='Enter Quantity')),
-            dbc.Col(dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')),
-            dbc.Col(dbc.Button('Add', id='button-add', n_clicks=0))
-        ],  style={'padding': '20px 0px'}),
-
-
-    ]
+    ], className="table-div"
 )
 
 
@@ -118,6 +163,20 @@ def set_cities_options(selected_country, selected_state):
         return [{'label': city, 'value': city} for city in cities]
     return []
 
+@callback(
+    Output("modal", "is_open"),
+    [
+        Input("open", "n_clicks"), 
+        Input("close", "n_clicks"), 
+        Input("button-add", "n_clicks")
+    ],
+    [State("modal", "is_open")],
+)
+def toggle_modal(n1, n2, n3, is_open):
+    if n1 or n2 or n3:
+        return not is_open
+    return is_open
+
 
 @callback(
     Output('records-datatable', 'data', allow_duplicate=True),
@@ -127,24 +186,21 @@ def set_cities_options(selected_country, selected_state):
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
-    ctx = callback_context
-    triggered_input = ctx.triggered[0]['prop_id'].split('.')[0]
-
     filtered_df = df.copy()
 
-    if selected_country and 'country-dropdown' in triggered_input:
+    if selected_country:
         filtered_df = filtered_df[filtered_df['Country'] == selected_country]
 
-    if selected_state and 'state-dropdown' in triggered_input:
+    if selected_state and selected_country:
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
 
-    if selected_city and 'city-dropdown' in triggered_input:
+    if selected_city and selected_state and selected_country:
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
 
     if filtered_df.empty:
         return df.to_dict('records')
 
-    return filtered_df.to_dict('records')
+    return filtered_df.to_dict('records')   
 
 
 @callback(
@@ -168,12 +224,12 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
     if n_clicks > 0:
         if not order_id or not product_id:
             error_alert = dbc.Alert("Order ID and Product ID are required.", color="danger")
-            return dash.no_update, None, None, None, None, None, error_alert, False
+            return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, error_alert, True
         
         for record in existing_data:
             if record['Order ID'] == order_id and record['Product ID'] == product_id:
                 error_alert = dbc.Alert("This order and product combination already exists.", color="danger")
-                return dash.no_update, None, None, None, None, None, error_alert, False
+                return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, error_alert, True
 
         new_entry = {
             'Order ID': order_id,

@@ -21,9 +21,6 @@ df_merged = pd.merge(orders_df, returns_df, on='Order ID', how='left')
 start_date, end_date = '1/1/2017', '12/31/2017'
 
 def filter_by_date(df, start_date, end_date):
-    print(start_date)
-    print(end_date)
-
     filtered_orders = df[(df['Order Date'] >= start_date) & (df['Order Date'] <= end_date)]
     return filtered_orders
 
@@ -72,7 +69,8 @@ def get_bubble_chart_data(df, yaxis, xaxis, category):
         'Returned': lambda x: (x == 'Yes').sum()
     }).reset_index()
 
-    grouped_df['Profit Ratio'] = grouped_df['Profit'] / grouped_df['Sales']
+    grouped_df['Profit Ratio'] = (grouped_df['Profit'] / grouped_df['Sales']) * 100
+    grouped_df['Discount'] = grouped_df['Discount'] * 100 
 
     if category != 'Product Name' and category != 'Sub-Category' and category != 'Category':
         unique_retuns = df.drop_duplicates(subset='Order ID').groupby(category).agg({
@@ -219,6 +217,21 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
 
     filter_date = filter_by_date(df_merged, start_date, end_date)
     df_filtered =  get_bubble_chart_data(filter_date, xaxis_val, yaxis_val, breakdown_val)
+
+    # hover config
+    x_format = '%{x:.0f}'
+    if xaxis_val == 'Profit' or xaxis_val == 'Sales':
+        x_format = '$%{x:,.0f}'
+    elif xaxis_val == 'Profit Ratio' or xaxis_val == 'Discount':
+        x_format = '%{x:.2f}%'
+
+    y_format = '%{y:.0f}'
+    if yaxis_val == 'Profit' or yaxis_val == 'Sales':
+        y_format = '$%{y:,.0f}'
+    elif yaxis_val == 'Profit Ratio' or yaxis_val == 'Discount':
+        y_format = '%{y:.2f}%'
+
+
     fig = {
         'data': [
             go.Scatter(
@@ -231,14 +244,15 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
                     sizemin=4,
                 ),
                 text=df_filtered[f'{breakdown_val} Count'],
-                hoverinfo='text'
+                customdata=df_filtered[breakdown_val],
+                hovertemplate=f"<b>%{{customdata}}: %{{text}}</b><br><br>{xaxis_val}: {x_format}<br>{yaxis_val}: {y_format}<br>"
+                
             )
         ],
         'layout': go.Layout(
             xaxis=dict(title=xaxis_val),
             yaxis=dict(title=yaxis_val),
             margin=dict(l=100, r=20, t=70, b=70),
-            # height=600
         )
     }
     return fig
@@ -261,19 +275,19 @@ def update_timeline_chart(start_date, end_date, granularity):
     if len(updated_df) == 1:
         mode += '+markers'
 
+    hovertemplate="<b>%{x}</b><br>%{y:.2f}"
     figure={
         'data': [
-            go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode=mode, marker=dict(color='#2CA58D')),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, yaxis="y2", marker=dict(color='#B7C9F2')),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', mode=mode, yaxis="y3", marker=dict(color='#474F7A')),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, yaxis="y4", marker=dict(color='#81689D')),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Quantity'], name='Quantity', mode=mode, yaxis="y5", marker=dict(color='#FFD0EC')),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Returned'], name='Returns', yaxis="y6", mode=mode),
-            go.Scatter(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', mode=mode, yaxis="y7", marker=dict(color='#1F2544')),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode=mode, marker=dict(color='#2CA58D'), hovertemplate=hovertemplate + " Days to ship</br>"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, yaxis="y2", marker=dict(color='#B7C9F2'), hovertemplate=hovertemplate + " Discount</br>"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', mode=mode, yaxis="y3", marker=dict(color='#474F7A'), hovertemplate=hovertemplate + " Profit</br>"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, yaxis="y4", marker=dict(color='#81689D'), hovertemplate=hovertemplate + " Profit Ratio</br>"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Quantity'], name='Quantity', mode=mode, yaxis="y5", marker=dict(color='#FFD0EC'), hovertemplate=hovertemplate + " Quantity</br>"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Returned'], name='Returns', yaxis="y6", mode=mode, hovertemplate=hovertemplate + " Returns"),
+            go.Scatter(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', mode=mode, yaxis="y7", marker=dict(color='#1F2544'), hovertemplate=hovertemplate + " Sales</br>"),
         ],
         'layout': go.Layout(
             title='Timeline Graph',
-            # xaxis=dict(title='Date'),
             yaxis=dict(
                 title="Days to Ship",
                 titlefont=dict(color="#2CA58D"),
@@ -285,6 +299,7 @@ def update_timeline_chart(start_date, end_date, granularity):
                 side="right",
                 titlefont=dict(color="#B7C9F2"),
                 tickfont=dict(color="#B7C9F2"),
+                tickformat='.0%'
             ),
             yaxis3=dict(title="Profit", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#474F7A"),tickfont=dict(color="#474F7A")),
             yaxis4=dict(
@@ -295,6 +310,7 @@ def update_timeline_chart(start_date, end_date, granularity):
                 autoshift=True,
                 titlefont=dict(color="#81689D"),
                 tickfont=dict(color="#81689D"),
+                tickformat='.0%'
             ),
             yaxis5=dict(title="Quantity", anchor="free", overlaying="y", autoshift=True, titlefont=dict(color="#FFD0EC"),tickfont=dict(color="#FFD0EC")),
             yaxis6=dict(title="Returns", anchor="free", overlaying="y", side="right", autoshift=True, titlefont=dict(color="#1F2544"),tickfont=dict(color="#1F2544")),

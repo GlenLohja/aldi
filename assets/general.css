@@ -89,8 +89,13 @@ h1, h2, h3 {
     border: 1px solid #ededed;
 }
 .SingleDatePickerInput {
+    width: 100%;
     border: 0px;
 }
+.SingleDatePicker, #start-date, #end-date {
+    width: 100%;
+}
+
 
 .DateInput, .DateInput_1 {
     width: 100%;

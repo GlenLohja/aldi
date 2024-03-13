@@ -24,15 +24,15 @@ layout = html.Div(
     [   
         dbc.Row([
             dbc.Col([
-                html.H2("Order History"),
-            ], xs=12, sm=12, md=3, lg=6, xl=6, xxl=6, align="center"),
+                html.H3("Order History"),
+            ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, align="center"),
 
             dbc.Col([
                 dbc.Button([
                     html.I(className="fa-solid fa-plus"),
                     " Add Order"
                 ], id='open', n_clicks=0)
-            ], xs=12, sm=12, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
+            ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
         ], style={'padding-bottom': '20px'}, align="start"),
         
         html.Div(id='status-div'),
@@ -63,7 +63,7 @@ layout = html.Div(
                             dbc.Label('Discount'),
                             dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')
                         ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
-                    ],  style={'padding': '20px 0px'}),
+                    ],  style={'padding': '5px 0px'}),
                 ]),
                 dbc.ModalFooter([
                     dbc.Button(
@@ -141,28 +141,6 @@ def clear_alert(n_intervals):
         return None, True, 0
     return dash.no_update, dash.no_update, dash.no_update    
 
-@callback(
-    Output('state-dropdown', 'options'),
-    [Input('country-dropdown', 'value')]
-)
-def set_states_options(selected_country):
-    if selected_country is not None:
-        states = df[df['Country'] == selected_country]['State'].unique()
-        return [{'label': state, 'value': state} for state in states]
-    return []
-
-
-@callback(
-    Output('city-dropdown', 'options'),
-    [Input('country-dropdown', 'value'),
-     Input('state-dropdown', 'value')]
-)
-def set_cities_options(selected_country, selected_state):
-    if selected_country and selected_state:
-        filtered_df = df[(df['Country'] == selected_country) & (df['State'] == selected_state)]
-        cities = filtered_df['City'].unique()
-        return [{'label': city, 'value': city} for city in cities]
-    return []
 
 @callback(
     Output("modal", "is_open", allow_duplicate=True),
@@ -178,6 +156,30 @@ def toggle_modal(n1, n2, is_open):
         return not is_open
     return is_open
 
+@callback(
+    [Output('state-dropdown', 'options'),
+     Output('state-dropdown', 'value')],
+    [Input('country-dropdown', 'value')]
+)
+def set_states_options(selected_country):
+    if selected_country is not None:
+        states = df[df['Country'] == selected_country]['State'].unique()
+        return [{'label': state, 'value': state} for state in states], None
+    return [], None
+
+
+@callback(
+    [Output('city-dropdown', 'options'),
+     Output('city-dropdown', 'value')],
+    [Input('country-dropdown', 'value'),
+     Input('state-dropdown', 'value')]
+)
+def set_cities_options(selected_country, selected_state):
+    if selected_country and selected_state:
+        filtered_df = df[(df['Country'] == selected_country) & (df['State'] == selected_state)]
+        cities = filtered_df['City'].unique()
+        return [{'label': city, 'value': city} for city in cities], None
+    return [], None
 
 @callback(
     Output('records-datatable', 'data', allow_duplicate=True),
@@ -192,17 +194,13 @@ def update_table(selected_country, selected_state, selected_city):
     if selected_country:
         filtered_df = filtered_df[filtered_df['Country'] == selected_country]
 
-    if selected_state and selected_country:
+    if selected_state:
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
 
-    if selected_city and selected_state and selected_country:
+    if selected_city:
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
 
-    if filtered_df.empty:
-        return df.to_dict('records')
-
-    return filtered_df.to_dict('records')   
-
+    return filtered_df.to_dict('records') if not filtered_df.empty else df.to_dict('records')
 
 @callback(
     [Output('records-datatable', 'data'),

@@ -1,10 +1,16 @@
 #records-datatable {
     background-color: #fff;
-    padding: 0px;
+    padding: 0px 0px 25px 0px;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    box-shadow: rgba(145, 158, 171, 0.08) 0px 0px 2px 0px, rgba(145, 158, 171, 0.08) 0px 1px;
 }
 
+.previous-next-container {
+    padding: 25px 15px!important;
+}
 .table-div {
-    margin: 20px 50px;
+    margin: 20px 40px;
 }
 
 .cell-table {

@@ -113,7 +113,7 @@ h1, h2, h3 {
     background-color: #fff;
     padding: 25px 0px 0px 10px;
     border-radius: 25px 25px 0px 0px;
-     box-shadow: rgba(145, 158, 171, 0.08) 0px 0px 2px 0px, rgba(145, 158, 171, 0.08) 0px 12px
+    box-shadow: rgba(145, 158, 171, 0.08) 0px 0px 2px 0px, rgba(145, 158, 171, 0.08) 0px 12px
 }
 
 /* primary button */
@@ -123,8 +123,10 @@ h1, h2, h3 {
     border-radius: 10px;
 
 }
-.btn-primary :focus{
-    background-color: #0c0c0e;
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary:active:focus, .open>.dropdown-toggle.btn-primary {
+    background-color: #000;
+    border-color: #000;
+    box-shadow: none;
 }
 
 .btn-primary .fa-solid {
@@ -135,7 +137,11 @@ h1, h2, h3 {
     background-color: #4CCD99;
     border-color: #4CCD99;
 }
+
 #add-order-error {
     color: #FF004D;
     margin: 0px;
+}
+.alert-success{
+    border-radius: 15px;
 }

@@ -7,7 +7,7 @@ def create_card(icon_class, title, content):
             dbc.Row(
                 [
                     dbc.Col(
-                        html.I(className=icon_class, style={"font-size": "3rem"}),
+                        html.I(className=icon_class, style={"fontSize": "3rem"}),
                         className="col-md-2 d-flex align-items-center justify-content-center",
                     ),
                     dbc.Col(

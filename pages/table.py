@@ -3,6 +3,7 @@ from dash import dcc, html, dash_table, callback, Output, Input, State
 import pandas as pd
 import dash_bootstrap_components as dbc
 from datetime import datetime
+from dash.exceptions import PreventUpdate
 
 
 dash.register_page(__name__, name='DataTable')
@@ -16,8 +17,6 @@ df = df.sort_values(by='Order Date', ascending=False)
 
 unique_countries = df['Country'].unique()
 country_options = [{'label': country, 'value': country} for country in unique_countries]
-
-# df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
 
 layout = html.Div(
     [   
@@ -190,18 +189,27 @@ def set_cities_options(selected_country, selected_state):
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
+
+    
     filtered_df = df.copy()
+    filtered = False
 
     if selected_country:
+        filtered = True
         filtered_df = filtered_df[filtered_df['Country'] == selected_country]
 
     if selected_state:
+        filtered = True
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
 
     if selected_city:
+        filtered = True
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
+    
+    if not filtered:
+        raise PreventUpdate
 
-    return filtered_df.to_dict('records') if not filtered_df.empty else df.to_dict('records')
+    return filtered_df.to_dict('records')
 
 
 @callback(
@@ -252,4 +260,4 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
         success_alert = dbc.Alert("Entry added successfully!", color="success")
         return existing_data, None, None, None, None, None, success_alert, "", False, False
 
-    return existing_data, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, "", True, False
+    return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, "", True, False

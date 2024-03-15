@@ -96,13 +96,15 @@ layout = html.Div([
                             x=grouped_sales_df['Month Name'],
                             y=grouped_sales_df['Sales'],
                             name='Sales',
-                            marker=dict(color='#427D9D') 
+                            marker=dict(color='#427D9D') ,
+                            hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"
                         ),
                         go.Bar(
                             x=grouped_sales_df['Month Name'],
                             y=grouped_sales_df['Profit'],
                             name='Profit',
-                            marker=dict(color='#9BBEC8') 
+                            marker=dict(color='#9BBEC8'),
+                            hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Profit</br>"
                         ),
                         go.Scatter(
                             x=grouped_sales_df['Month Name'],
@@ -114,9 +116,9 @@ layout = html.Div([
                         )
                     ],
                     'layout': go.Layout(
-                        title='Sales, Profit, and Profit Ratio Over Time',
+                        title='Sales, Profit, and Profit Ratio Over Time (2017)',
                         xaxis=dict(title='Date'),
-                        yaxis=dict(title='Amount', side='left', rangemode='tozero'),
+                        yaxis=dict(title='Profit & Sales', side='left', rangemode='tozero'),
                         yaxis2=dict(title='Ratio %', side='right', overlaying='y', rangemode='tozero', tickformat='.0%'),
                         barmode='group',
                         legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)',
@@ -124,7 +126,7 @@ layout = html.Div([
                     )
                 }
             )
-        ], xs=12, sm=6, md=8, lg=8, xl=8, xxl=8, align="center"),
+        ], xs=12, sm=12, md=12, lg=6, xl=8, xxl=8, align="center"),
         dbc.Col([
             dcc.Graph(
                 id='horizontal-bar-chart',
@@ -134,11 +136,13 @@ layout = html.Div([
                             x=top_10_products['Quantity'],
                             y=top_10_products['Product ID'],
                             orientation='h',
-                            marker=dict(color='#427D9D')
+                            marker=dict(color='#427D9D'),
+                            customdata=top_10_products['Product Name'],
+                            hovertemplate="<b>Quantity: %{x}</b><br>%{customdata}</br>"
                         )
                     ],
                     'layout': go.Layout(
-                        title='Product Value',
+                        title='Top 10 Products',
                         xaxis=dict(title='Quantity'),
                         yaxis=dict(title='Product', autorange='reversed'),
                         margin=dict(l=150),
@@ -146,7 +150,7 @@ layout = html.Div([
                     )
                 }
             )
-        ], xs=12, sm=6, md=4, lg=4, xl=4, xxl=4, align="center")
+        ], xs=12, sm=12, md=12, lg=6, xl=4, xxl=4)
     ], style={'padding': '10px 0px'}),
     dbc.Row([
         dbc.Col([
@@ -172,15 +176,15 @@ layout = html.Div([
                     'layout': go.Layout(
                         title='Profit Ratio Timeline',
                         xaxis=dict(title='Date'),
-                        yaxis=dict(title='Profit Ratio'),
+                        yaxis=dict(title='Profit Ratio', tickformat='.0%'),
                         hovermode='x'
                     )
                 }
             )
-        ], xs=12, sm=6, md=4, lg=4, xl=4, xxl=8, align="center"),
+        ], xs=12, sm=12, md=12, lg=6, xl=8, xxl=8),
         dbc.Col([
             dcc.Graph(
-                id='timeline-chart',
+                id='orders-chart',
                 figure={
                     'data': [
                         go.Scatter(
@@ -199,7 +203,7 @@ layout = html.Div([
                     )
                 }
             )
-        ], xs=12, sm=6, md=4, lg=4, xl=4, xxl=4, align="center"),
+        ], xs=12, sm=12, md=12, lg=6, xl=4, xxl=4, align="center"),
         
 
     ], style={'padding': '10px 0px'}),

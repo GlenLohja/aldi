@@ -194,7 +194,6 @@ def set_cities_options(selected_country, selected_state):
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
-
     
     filtered_df = df.copy()
     filtered = False
@@ -212,7 +211,6 @@ def update_table(selected_country, selected_state, selected_city):
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
     
     if not filtered:
-        print('here')
         return dash.no_update
 
     return filtered_df.to_dict('records')
@@ -245,26 +243,26 @@ def update_table(selected_country, selected_state, selected_city):
     prevent_initial_call=True
 )
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id, existing_data):
-    if n_clicks > 0:
-        if not order_id or not product_id:
-            error = "Order ID and Product ID are required."
-            return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
-        
-        for record in existing_data:
-            if record['Order ID'] == order_id and record['Product ID'] == product_id:
-                error = "This order and product combination already exists."
-                return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
-        new_entry = {
-            'Order ID': order_id,
-            'Product ID': product_id,
-            'Customer ID': customer_id,
-            'Quantity': quantity_id,
-            'Discount': discount_id,
-            'Order Date': datetime.today().strftime('%Y-%m-%d')
-        }
-        existing_data.insert(0, new_entry)
-        success_alert = dbc.Alert("Entry added successfully!", color="success")
-        return existing_data, None, None, None, None, None, success_alert, "", False, False
+    if not order_id or not product_id:
+        error = "Order ID and Product ID are required."
+        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
+    
+    df_existing = pd.DataFrame(existing_data)
+    if df_existing[(df_existing['Order ID'] == order_id) & (df_existing['Product ID'] == product_id)].empty is False:
+        error = "This order and product combination already exists."
+        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
-    return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, "", True, False
+    new_entry = {
+        'Order ID': order_id,
+        'Product ID': product_id,
+        'Customer ID': customer_id,
+        'Quantity': quantity_id,
+        'Discount': discount_id,
+        'Order Date': datetime.today().strftime('%Y-%m-%d')
+    }
+    existing_data.insert(0, new_entry)
+    success_alert = dbc.Alert("Entry added successfully!", color="success")
+    return existing_data, None, None, None, None, None, success_alert, "", False, False
+
+

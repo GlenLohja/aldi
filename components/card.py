@@ -24,5 +24,4 @@ def create_card(icon_class, title, content):
             )
         ],
         className="mb-3",
-        style={"maxWidth": "540px"},
     )

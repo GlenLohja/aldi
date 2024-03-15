@@ -55,6 +55,11 @@ h1, h2, h3 {
     border-radius: 25px;
 }
 
+.modebar {
+    top: 10px!important;
+    right: 25px!important;
+}
+
 .timeline-div {
     background-color: #ffff;
     height: 100%;
@@ -125,6 +130,11 @@ h1, h2, h3 {
     border-color: #343d47;
     border-radius: 10px;
 
+}
+
+#horizontal-bar-chart {
+    height: 100%;
+    width: 100%;
 }
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary:active:focus, .open>.dropdown-toggle.btn-primary {
     background-color: #000;

@@ -6,4 +6,4 @@
     #Copy files to your container
     COPY . ./
     #Running your APP and doing some PORT Forwarding
-    CMD gunicorn -b 0.0.0.0:80 app:server
+    CMD gunicorn -b 0.0.0.0:80 app:app

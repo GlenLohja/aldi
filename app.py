@@ -11,6 +11,8 @@ external_stylesheets = [
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=external_stylesheets)
 
+server = app.server
+
 sidebar = create_sidebar()
 
 app.layout = dbc.Container([

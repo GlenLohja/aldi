@@ -3,6 +3,7 @@ from dash import dcc, html, dash_table, callback, Output, Input, State
 import pandas as pd
 import dash_bootstrap_components as dbc
 from datetime import datetime
+from dash.exceptions import PreventUpdate
 
 
 dash.register_page(__name__, name='DataTable')
@@ -112,19 +113,17 @@ layout = html.Div(
         ),
 
         dbc.Row([
-            dcc.Loading([
-                dash_table.DataTable(
-                    id='records-datatable',
-                    data=df.to_dict('records'),
-                    columns=[{"name": i, "id": i} for i in df.columns],
-                    page_size=10,
-                    style_as_list_view=True,
-                    style_table={'overflowX': 'auto'},
-                    style_cell={'textAlign': 'left'},
-                    markdown_options={"html": True}
-                )
-            ])
-        ], className='datatable-row'),
+            dash_table.DataTable(
+                id='records-datatable',
+                data=df.to_dict('records'),
+                columns=[{"name": i, "id": i} for i in df.columns],
+                page_size=10,
+                style_as_list_view=True,
+                style_table={'overflowX': 'auto'},
+                style_cell={'textAlign': 'left'},
+                markdown_options={"html": True}
+            )
+        ]),
 
     ], className="table-div"
 )
@@ -161,8 +160,7 @@ def toggle_modal(n1, n2, is_open):
 @callback(
     [Output('state-dropdown', 'options'),
      Output('state-dropdown', 'value')],
-    [Input('country-dropdown', 'value')],
-    prevent_initial_call=True
+    [Input('country-dropdown', 'value')]
 )
 def set_states_options(selected_country):
     if selected_country is not None:
@@ -175,8 +173,7 @@ def set_states_options(selected_country):
     [Output('city-dropdown', 'options'),
      Output('city-dropdown', 'value')],
     [Input('country-dropdown', 'value'),
-     Input('state-dropdown', 'value')],
-     prevent_initial_call=True
+     Input('state-dropdown', 'value')]
 )
 def set_cities_options(selected_country, selected_state):
     if selected_country and selected_state:
@@ -212,8 +209,7 @@ def update_table(selected_country, selected_state, selected_city):
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
     
     if not filtered:
-        print('here')
-        return dash.no_update
+        raise PreventUpdate
 
     return filtered_df.to_dict('records')
 
@@ -241,8 +237,7 @@ def update_table(selected_country, selected_state, selected_city):
         State('quantity-id', 'value'),
         State('discount-id', 'value'),
         State('records-datatable', 'data')
-    ],
-    prevent_initial_call=True
+    ]
 )
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id, existing_data):
     if n_clicks > 0:

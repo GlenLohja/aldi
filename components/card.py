@@ -8,7 +8,7 @@ def create_card(icon_class, title, content):
                 [
                     dbc.Col(
                         html.I(className=icon_class, style={"fontSize": "3rem"}),
-                        className="col-md-2 d-flex align-items-center justify-content-center",
+                        className="col-md-2 d-flex justify-content-end",
                     ),
                     dbc.Col(
                         dbc.CardBody(
@@ -17,7 +17,7 @@ def create_card(icon_class, title, content):
                                 html.P(content, className="card-text"),
                             ]
                         ),
-                        className="col-md-10",
+                        className="col-md-10 px-3",
                     ),
                 ],
                 className="g-0 d-flex align-items-center",

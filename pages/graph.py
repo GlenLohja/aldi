@@ -141,7 +141,6 @@ layout = html.Div(
             dbc.Col(
                 [   
                     html.Div([
-
                         dcc.Graph(
                             id='timeline-graph',
                         )
@@ -280,24 +279,24 @@ def update_timeline_chart_v2(start_date, end_date, granularity):
     hovertemplate = "<b>%{x}</b><br>%{y:.2f}"
 
     # Create a subplot figure with 2x2 grid
-    fig = make_subplots(rows=2, cols=2, shared_xaxes=True, vertical_spacing=0.1, horizontal_spacing=0.25,)
+    fig = make_subplots(rows=2, cols=2, shared_xaxes=True, vertical_spacing=0.1, horizontal_spacing=0.25)
 
-    # Plot Profit and Sales as stacked bars on the primary y-axis of the first subplot
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Profit</br>"), row=1, col=1)
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', marker=dict(color='#4c7a9c'), hovertemplate=hovertemplate + " Sales</br>"), row=1, col=1)
+    # Top left subplot with Profit and sales
+    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', marker=dict(color='#e6221b'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Profit</br>"), row=1, col=1)
+    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', marker=dict(color='#4c7a9c'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"), row=1, col=1)
 
-    # Plot Discount and Profit Ratio as lines on the secondary y-axis of the first subplot
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode='lines', marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Discount</br>"), row=1, col=2)
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode='lines', marker=dict(color='#4c7a9c'), hovertemplate=hovertemplate + " Profit Ratio</br>"), row=1, col=2)
+    # top right subplot iwth Discount and Profit Ratio
+    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, marker=dict(color='#e6221b')), row=1, col=2)
+    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, marker=dict(color='#4c7a9c')), row=1, col=2)
 
-    # Top right subplot with Discount
+    # bottom left subplot with Returned & Quantity
     fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Returned'], name='Returns', marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Returns</br>"), row=2, col=1)
     fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Quantity'], name='Quantity', marker=dict(color='#4c7a9c'), hovertemplate=hovertemplate + " Quantity</br>"), row=2, col=1)
 
-    # Bottom right subplot with Quantity, Returns, and Sales
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode='lines', marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Days to Ship</br>"), row=2, col=2)
+    # Bottom right subplot with Days to ship
+    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode=mode, marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Days to Ship</br>"), row=2, col=2)
 
-    # Update layout for shared x-axis and distinct y-axis configurations
+    # Update layout
     fig.update_layout(height=600, title_text="Timeline Graph", plot_bgcolor='rgba(255,255,255,0.5)', legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)', orientation='h') )
     fig.update_yaxes(title_text="Profit & Sales", row=1, col=1)
     fig.update_yaxes(title_text="Discount & Profit Ratio", tickformat='.0%', row=1, col=2)

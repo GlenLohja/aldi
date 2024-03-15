@@ -54,21 +54,21 @@ grouped_current_month_df = aggregate_sales_data(df, 2017, 12)
 grouped_prev_month_df = aggregate_sales_data(df, 2017, 11)
 
 sales_card = create_card(
-    "fa-solid fa-money-check-dollar",
+    "fa-solid fa-sack-dollar",
     "Total Sales",
-    f"{round(grouped_sales_df['Sales'].sum(), 2)}$"
+    f"{round(grouped_sales_df['Sales'].sum(), 2):,.0f}$"
 )
 
 profit_card = create_card(
-    "fa-solid fa-money-bill-trend-up",
+    "fa-solid fa-hand-holding-dollar",
     "Total Profit",
-    f"{round(grouped_sales_df['Profit'].sum(), 2)}$"
+    f"{round(grouped_sales_df['Profit'].sum(), 2):,.0f}$"
 )
 
 
 profit_ratio = round(grouped_sales_df['Profit'].sum() / grouped_sales_df['Sales'].sum(), 3) * 100
 profit_ratio_card = create_card(
-    "fa-solid fa-percent",
+    "fa-solid fa-piggy-bank",
     "Profit Ratio",
     f"{profit_ratio}%"
 )

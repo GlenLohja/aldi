@@ -6,6 +6,14 @@
     box-shadow: rgba(145, 158, 171, 0.08) 0 0 2px 0, rgba(145, 158, 171, 0.08) 0 1px;
 }
 
+.datatable-row > div:first-child {
+    padding: 0px!important;
+}
+
+#loading {
+    margin: 0px;
+}
+
 .previous-next-container {
     padding: 25px 15px!important;
 }

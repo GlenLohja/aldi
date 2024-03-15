@@ -96,7 +96,7 @@ layout = html.Div([
                             x=grouped_sales_df['Month Name'],
                             y=grouped_sales_df['Sales'],
                             name='Sales',
-                            marker=dict(color='#427D9D') ,
+                            marker=dict(color='#427D9D'),
                             hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"
                         ),
                         go.Bar(

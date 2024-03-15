@@ -1,5 +1,5 @@
 import dash
-from dash import dcc, html, callback, clientside_callback, Output, Input
+from dash import dcc, html, callback, Output, Input
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
@@ -7,9 +7,7 @@ from plotly.subplots import make_subplots
 from datetime import date
 from dash.exceptions import PreventUpdate
 
-
 dash.register_page(__name__, name='Graphs')
-
 
 orders_df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
 returns_df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Returns')
@@ -84,7 +82,7 @@ def get_bubble_chart_data(df, yaxis, xaxis, category):
         xaxis: grouped_df[xaxis].tolist(),
         yaxis: grouped_df[yaxis].tolist(),
         f"{category} Count": grouped_df['Row ID'].tolist(),
-        category: grouped_df[category].tolist(),
+        category: grouped_df[category].tolist()
     })
 
 
@@ -131,12 +129,17 @@ layout = html.Div(
                 dbc.Label("Date Granularity"),
                 dbc.Select(
                     id='granularity-dropdown',
-                    options=[{'label' : 'Week', 'value': 'week'}, {'label' : 'Month', 'value': 'month'}, {'label' : 'Quarter', 'value': 'quarter'}, {'label' : 'Year', 'value': 'year'}],
+                    options=[
+                        {'label': 'Week', 'value': 'week'},
+                        {'label': 'Month', 'value': 'month'},
+                        {'label': 'Quarter', 'value': 'quarter'},
+                        {'label': 'Year', 'value': 'year'}
+                    ],
                     value='month',
                     placeholder="Granularity"
                 )
-            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2),
-        ], style={'padding': '20px 0px'}),
+            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2)
+        ], className="py-4"),
         dbc.Row([
             dbc.Col(
                 [   
@@ -145,7 +148,7 @@ layout = html.Div(
                             id='timeline-graph',
                         )
                     ], className="timeline-div")
-                ], xs=12, sm=12, md=6, lg=6, xl=6, xxl=6,
+                ], xs=12, sm=12, md=6, lg=6, xl=6, xxl=6
             ),
             dbc.Col(
                 [   
@@ -155,15 +158,29 @@ layout = html.Div(
                                 dbc.Label("Y Axis"),
                                 dbc.Select(
                                     id='yaxis-dropdown',
-                                    options=['Days to Ship', 'Discount', 'Profit Ratio', 'Quantity', 'Returns', 'Sales'],
+                                    options=[
+                                        'Days to Ship',
+                                        'Discount',
+                                        'Profit Ratio',
+                                        'Quantity',
+                                        'Returns',
+                                        'Sales'
+                                    ],
                                     value='Sales',
-                                ),
+                                )
                             ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center"),
                             dbc.Col([
                                 dbc.Label("X Axis"),
                                 dbc.Select(
                                     id='xaxis-dropdown',
-                                    options=['Days to Ship', 'Discount', 'Profit', 'Profit Ratio', 'Quantity', 'Returns'],
+                                    options=[
+                                        'Days to Ship',
+                                        'Discount',
+                                        'Profit',
+                                        'Profit Ratio',
+                                        'Quantity',
+                                        'Returns'
+                                    ],
                                     value='Profit',
                                 ),
                             ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center"),
@@ -171,11 +188,18 @@ layout = html.Div(
                                 dbc.Label("Breakdown"),
                                 dbc.Select(
                                     id='breakdown-dropdown',
-                                    options=['Segment', 'Ship Mode', 'Customer Name', 'Category', 'Sub-Category', 'Product Name'],
+                                    options=[
+                                        'Segment',
+                                        'Ship Mode',
+                                        'Customer Name',
+                                        'Category',
+                                        'Sub-Category',
+                                        'Product Name'
+                                    ],
                                     value='Ship Mode',
                                     placeholder="Category"
                                 ),
-                            ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center"),
+                            ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center")
                         ], style={'padding-top': '15px'}, justify="end"),
                         dcc.Graph(
                             id='bubblechart',
@@ -183,13 +207,14 @@ layout = html.Div(
                     ])
                 ], className="bubble-chart-div", xs=12, sm=12, md=6, lg=6, xl=6, xxl=6
             )
-        ]),
+        ])
     ]
 )
 
+
 @callback(
     Output('yaxis-dropdown', 'options'),
-    [Input('xaxis-dropdown', 'value')]
+    Input('xaxis-dropdown', 'value')
 )
 def set_yaxis_options(selected_xaxis):
     return [option for option in axis_options if option['value'] != selected_xaxis]
@@ -197,7 +222,7 @@ def set_yaxis_options(selected_xaxis):
 
 @callback(
     Output('xaxis-dropdown', 'options'),
-    [Input('yaxis-dropdown', 'value')]
+    Input('yaxis-dropdown', 'value')
 )
 def set_xaxis_options(selected_yaxis):
     return [option for option in axis_options if option['value'] != selected_yaxis]
@@ -218,7 +243,7 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
         raise PreventUpdate
 
     filter_date = filter_by_date(df_merged, start_date, end_date)
-    df_filtered =  get_bubble_chart_data(filter_date, xaxis_val, yaxis_val, breakdown_val)
+    df_filtered = get_bubble_chart_data(filter_date, xaxis_val, yaxis_val, breakdown_val)
 
     # hover config
     x_format = '%{x:.0f}'
@@ -242,12 +267,14 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
                 marker=dict(
                     size=df_filtered[f'{breakdown_val} Count'],
                     sizeref=2. * max(df_filtered.get(f'{breakdown_val} Count', []), default=0) / (15**2),
-                    sizemin=4,
+                    sizemin=4
                 ),
                 text=df_filtered[f'{breakdown_val} Count'],
                 customdata=df_filtered[breakdown_val],
-                hovertemplate=f"<b>%{{customdata}}: %{{text}}</b><br><br>{xaxis_val}: {x_format}<br>{yaxis_val}: {y_format}<br>"
-                
+                hovertemplate=f""
+                              f"<b>%{{customdata}}: %{{text}}"
+                              f"<br><br>{xaxis_val}: {x_format}"
+                              f"<br>{yaxis_val}: {y_format}<br>"
             )
         ],
         'layout': go.Layout(
@@ -261,9 +288,11 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
 
 @callback(
     Output('timeline-graph', 'figure'),
-    [Input('start-date', 'date'),
-    Input('end-date', 'date'),
-    Input('granularity-dropdown', 'value')]
+    [
+        Input('start-date', 'date'),
+        Input('end-date', 'date'),
+        Input('granularity-dropdown', 'value')
+    ]
 )
 def update_timeline_chart_v2(start_date, end_date, granularity):
     if start_date is None or end_date is None or granularity is None:
@@ -285,7 +314,7 @@ def update_timeline_chart_v2(start_date, end_date, granularity):
     fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', marker=dict(color='#e6221b'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Profit</br>"), row=1, col=1)
     fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', marker=dict(color='#4c7a9c'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"), row=1, col=1)
 
-    # top right subplot iwth Discount and Profit Ratio
+    # top right subplot with Discount and Profit Ratio
     fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, marker=dict(color='#e6221b')), row=1, col=2)
     fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, marker=dict(color='#4c7a9c')), row=1, col=2)
 

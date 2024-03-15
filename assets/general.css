@@ -1,36 +1,15 @@
 body {
     background: #f9fafb;
-    font-family: system-ui, 'Public Sans', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Public Sans', sans-serif;
+    font-weight: 500;
 }
 
 h1, h2, h3 {
     color: #343d47;
 }
 
-.nav {
-    margin-top: 15px;
-}
-
-.nav-link {
-    border-radius: 10px;
-    color: #74808c!important;
-}
-
-.nav-link .fa-solid {
-    color: #74808c!important;
-}
-
-.nav-link.active .fa-solid {
-    color: #4da6d9!important;
-}
-
-.nav-link.active {
-    background-color: #e8eefa!important;
-    color: #4da6d9!important;
-}
-
-.bg-light {
-    background-color: inherit!important;
+.page-wrapper {
+    margin-top:60px;
 }
 
 .card {
@@ -44,6 +23,18 @@ h1, h2, h3 {
 
 .company {
     margin-left: 15px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.company-logo {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
 }
 
 .fa-solid {
@@ -66,16 +57,6 @@ h1, h2, h3 {
     border-radius: 25px;
     padding-top: 20px;
 }
-.form-select {
-    line-height: 1.45;
-    border-radius: 10px;
-}
-.form-label {
-    margin-bottom: 0;
-}
-.form-control {
-    border-radius: 10px;
-}
 
 .modal-content {
     border-radius: 25px;
@@ -83,38 +64,6 @@ h1, h2, h3 {
 
 .modal-body {
     margin: 0 10px;
-}
-.Select-control {
-    border-radius: 10px!important;
-    border: 1px solid #ededed;
-}
-
-.Select-value {
-    border: 1px solid #ededed;
-}
-.SingleDatePickerInput {
-    width: 100%;
-    border: 0;
-}
-.SingleDatePicker, #start-date, #end-date {
-    width: 100%;
-}
-
-
-.DateInput, .DateInput_1 {
-    width: 100%;
-}
-
-.DateInput_input, .DateInput_input_1 {
-    height: calc(1.5em + 0.75rem + 2px);
-    font-size: 0.9375rem;
-    font-weight: 400;
-    color: #000;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ededed;
-    border-radius: 10px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .filterDiv {
@@ -155,6 +104,7 @@ h1, h2, h3 {
     color: #FF004D;
     margin: 0;
 }
+
 .alert-success{
     border-radius: 15px;
 }

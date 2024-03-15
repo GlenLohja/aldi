@@ -1,0 +1,29 @@
+.nav {
+    margin-top: 15px;
+}
+
+.nav-link {
+    border-radius: 10px;
+    color: #74808c!important;
+}
+
+.nav-link .fa-solid {
+    color: #74808c!important;
+}
+
+.nav-link.active .fa-solid {
+    color: #4da6d9!important;
+}
+
+.nav-link.active {
+    background-color: #e8eefa!important;
+    color: #4da6d9!important;
+}
+
+.bg-light {
+    background-color: inherit!important;
+}
+
+.sidebar-wrapper {
+    border-right: 0.1rem solid #ecf0f4;
+}

@@ -4,7 +4,6 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 from datetime import datetime
 
-
 dash.register_page(__name__, name='DataTable')
 
 df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
@@ -13,29 +12,30 @@ df['Order Date'] = df['Order Date'].dt.strftime('%Y-%m-%d')
 df['Ship Date'] = df['Ship Date'].dt.strftime('%Y-%m-%d')
 df = df.sort_values(by='Order Date', ascending=False)
 
-
+# get countries for country dropdown
 unique_countries = df['Country'].unique()
 country_options = [{'label': country, 'value': country} for country in unique_countries]
-
-# df = df[['Order Date', 'Ship Date', 'Customer ID', 'Product ID', 'Quantity', 'Discount']]
 
 layout = html.Div(
     [   
         dbc.Row([
+            # page title
             dbc.Col([
                 html.H3("Order History"),
             ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, align="center"),
 
+            # add order button
             dbc.Col([
                 dbc.Button([
                     html.I(className="fa-solid fa-plus"),
                     " Add Order"
                 ], id='open', n_clicks=0)
             ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
-        ], style={'padding-bottom': '20px'}, align="start"),
+        ], className="pb-4", align="start"),
         
         html.Div(id='status-div'),
-        
+
+        # add order modal
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle("Add Order")),
@@ -61,8 +61,8 @@ layout = html.Div(
                         dbc.Col([
                             dbc.Label('Discount'),
                             dbc.Input(id='discount-id', placeholder='Enter Discount (0 - 1)')
-                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2"),
-                    ],  style={'padding': '5px 0px'}),
+                        ], xs=12, sm=12, md=12, lg=12, xl=12, xxl=12, className="p-2")
+                    ], className="py-2"),
                 ]),
                 dbc.ModalFooter([
                     dbc.Button(
@@ -71,11 +71,12 @@ layout = html.Div(
                     dbc.Button(
                         "Add Order", id='button-add', n_clicks=0
                     )
-                ]),
+                ])
             ],
             id="modal",
-            is_open=False,
+            is_open=False
         ),
+        # hierarchy dropdowns (country > state > city)
         dbc.Row([
             dbc.Col([
                 dcc.Dropdown(
@@ -120,8 +121,7 @@ layout = html.Div(
                     page_size=10,
                     style_as_list_view=True,
                     style_table={'overflowX': 'auto'},
-                    style_cell={'textAlign': 'left'},
-                    markdown_options={"html": True}
+                    style_cell={'textAlign': 'left'}
                 )
             ])
         ], className='datatable-row'),
@@ -130,10 +130,13 @@ layout = html.Div(
 )
 
 
+# - Form alert callback
 @callback(
-    [Output('status-div', 'children', allow_duplicate=True),
-     Output('alert-clear-interval', 'disabled', allow_duplicate=True),
-     Output('alert-clear-interval', 'n_intervals')],
+    [
+        Output('status-div', 'children', allow_duplicate=True),
+        Output('alert-clear-interval', 'disabled', allow_duplicate=True),
+        Output('alert-clear-interval', 'n_intervals')
+    ],
     Input('alert-clear-interval', 'n_intervals'),
     prevent_initial_call=True
 )
@@ -143,13 +146,14 @@ def clear_alert(n_intervals):
     return dash.no_update, dash.no_update, dash.no_update    
 
 
+# - Open and close modal callback
 @callback(
     Output("modal", "is_open", allow_duplicate=True),
     [
         Input("open", "n_clicks"), 
         Input("close", "n_clicks"), 
     ],
-    [State("modal", "is_open")],
+    State("modal", "is_open"),
     prevent_initial_call=True
 )
 def toggle_modal(n1, n2, is_open):
@@ -158,10 +162,13 @@ def toggle_modal(n1, n2, is_open):
     return is_open
 
 
+# - Fill state dropdown after country select
 @callback(
-    [Output('state-dropdown', 'options'),
-     Output('state-dropdown', 'value')],
-    [Input('country-dropdown', 'value')],
+    [
+        Output('state-dropdown', 'options'),
+        Output('state-dropdown', 'value')
+    ],
+    Input('country-dropdown', 'value'),
     prevent_initial_call=True
 )
 def set_states_options(selected_country):
@@ -171,12 +178,17 @@ def set_states_options(selected_country):
     return [], None
 
 
+# - Fill city dropdown after country & state select
 @callback(
-    [Output('city-dropdown', 'options'),
-     Output('city-dropdown', 'value')],
-    [Input('country-dropdown', 'value'),
-     Input('state-dropdown', 'value')],
-     prevent_initial_call=True
+    [
+        Output('city-dropdown', 'options'),
+        Output('city-dropdown', 'value')
+    ],
+    [
+        Input('country-dropdown', 'value'),
+        Input('state-dropdown', 'value')
+    ],
+    prevent_initial_call=True
 )
 def set_cities_options(selected_country, selected_state):
     if selected_country and selected_state:
@@ -186,11 +198,14 @@ def set_cities_options(selected_country, selected_state):
     return [], None
 
 
+# - Filter datatable based on selected dropdowns
 @callback(
     Output('records-datatable', 'data', allow_duplicate=True),
-    [Input('country-dropdown', 'value'),
-     Input('state-dropdown', 'value'),
-     Input('city-dropdown', 'value')],
+    [
+        Input('country-dropdown', 'value'),
+        Input('state-dropdown', 'value'),
+        Input('city-dropdown', 'value')
+    ],
     prevent_initial_call=True
 )
 def update_table(selected_country, selected_state, selected_city):
@@ -216,6 +231,7 @@ def update_table(selected_country, selected_state, selected_city):
     return filtered_df.to_dict('records')
 
 
+# - Add order into datatable.
 @callback(
     [
         Output('records-datatable', 'data'),

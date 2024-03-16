@@ -251,13 +251,13 @@ def update_table(selected_country, selected_state, selected_city):
     prevent_initial_call=True
 )
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id):
-    global df
+    new_df = df.copy()
 
     if not order_id or not product_id:
         error = "Order ID and Product ID are required."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
-    if df[(df['Order ID'] == order_id) & (df['Product ID'] == product_id)].empty is False:
+    if new_df[(new_df['Order ID'] == order_id) & (new_df['Product ID'] == product_id)].empty is False:
         error = "This order and product combination already exists."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
@@ -269,9 +269,9 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
         'Discount': discount_id,
         'Order Date': datetime.today().strftime('%Y-%m-%d')
     }])
-    df = pd.concat([df, new_entry], ignore_index=True)
+    new_df = pd.concat([new_df, new_entry], ignore_index=True)
 
     success_alert = dbc.Alert("Entry added successfully!", color="success")
-    return df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
+    return new_df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
 
 

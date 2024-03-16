@@ -115,7 +115,7 @@ layout = html.Div(
             dcc.Loading([
                 dash_table.DataTable(
                     id='records-datatable',
-                    data=[df.to_dict['records']],
+                    data=df.to_dict('records'),
                     columns=[{"name": i, "id": i} for i in df.columns],
                     page_size=10,
                     style_as_list_view=True,
@@ -201,7 +201,7 @@ def set_cities_options(selected_country, selected_state):
 
 # - Filter datatable based on selected dropdowns
 @callback(
-    Output('records-datatable', 'data', , allow_duplicate=True),
+    Output('records-datatable', 'data', allow_duplicate=True),
     [
         Input('country-dropdown', 'value'),
         Input('state-dropdown', 'value'),

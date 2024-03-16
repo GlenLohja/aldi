@@ -10,7 +10,6 @@ df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
 
 df['Order Date'] = df['Order Date'].dt.strftime('%Y-%m-%d')
 df['Ship Date'] = df['Ship Date'].dt.strftime('%Y-%m-%d')
-df = df.sort_values(by='Order Date', ascending=False)
 
 # get countries for country dropdown
 unique_countries = df['Country'].unique()
@@ -120,6 +119,8 @@ layout = html.Div(
                     columns=[{"name": i, "id": i} for i in df.columns],
                     page_size=10,
                     style_as_list_view=True,
+                    sort_action='native',
+                    sort_by=[{'column_id': 'Order Date', 'direction': 'desc'}],
                     style_table={'overflowX': 'auto'},
                     style_cell={'textAlign': 'left'}
                 )
@@ -251,13 +252,13 @@ def update_table(selected_country, selected_state, selected_city):
     prevent_initial_call=True
 )
 def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id):
-    new_df = df.copy()
+    global df
 
     if not order_id or not product_id:
         error = "Order ID and Product ID are required."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
-    if new_df[(new_df['Order ID'] == order_id) & (new_df['Product ID'] == product_id)].empty is False:
+    if df[(df['Order ID'] == order_id) & (df['Product ID'] == product_id)].empty is False:
         error = "This order and product combination already exists."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
@@ -269,11 +270,9 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
         'Discount': discount_id,
         'Order Date': datetime.today().strftime('%Y-%m-%d')
     }])
-    new_df = pd.concat([new_df, new_entry], ignore_index=True)
-    new_df['Order Date'] = pd.to_datetime(new_df['Order Date'])
-    new_df = new_df.sort_values(by='Order Date', ascending=False)
+    df = pd.concat([df, new_entry], ignore_index=True)
 
     success_alert = dbc.Alert("Entry added successfully!", color="success")
-    return new_df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
+    return df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
 
 

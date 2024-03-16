@@ -18,6 +18,16 @@
     padding: 25px 15px!important;
 }
 
+.column-header--sort {
+    padding-right: 5px;
+    /* color: black; */
+}
+
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    --accent: #484848!important;
+}
+
 .cell-table {
     border-collapse: collapse;
     margin: 25px 0;

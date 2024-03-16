@@ -31,7 +31,7 @@ layout = html.Div(
                     " Add Order"
                 ], id='open', n_clicks=0)
             ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
-        ], className="pb-4", align="start"),
+        ], className="py-4", align="start"),
         
         html.Div(id='status-div'),
 
@@ -85,7 +85,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a country"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([
                 dcc.Dropdown(
                     id='state-dropdown',
@@ -93,7 +93,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a state"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([
                 dcc.Dropdown(
                     id='city-dropdown',
@@ -101,7 +101,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a city"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
 
         ], className="filterDiv", justify="start"),
 
@@ -126,7 +126,7 @@ layout = html.Div(
             ])
         ], className='datatable-row'),
 
-    ], className="table-div"
+    ], className="p-4"
 )
 
 

@@ -3,7 +3,6 @@ from dash import dcc, html, dash_table, callback, Output, Input, State
 import pandas as pd
 import dash_bootstrap_components as dbc
 from datetime import datetime
-from dash.exceptions import PreventUpdate
 
 dash.register_page(__name__, name='DataTable')
 
@@ -263,14 +262,12 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
 
     if not order_id or not product_id:
         error = "Order ID and Product ID are required."
-        raise PreventUpdate
-        # return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
+        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
     
     df_existing = pd.DataFrame(existing_data)
     if df_existing[(df_existing['Order ID'] == order_id) & (df_existing['Product ID'] == product_id)].empty is False:
         error = "This order and product combination already exists."
-        raise PreventUpdate
-        # return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
+        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
     new_entry = {
         'Order ID': order_id,

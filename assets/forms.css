@@ -1,45 +1,46 @@
 .form-select {
-    line-height: 1.45;
-    border-radius: 10px;
+  line-height: 1.45;
+  border-radius: 10px;
 }
 
 .form-label {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .form-control {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .Select-control {
-    border-radius: 10px!important;
-    border: 1px solid #ededed;
+  border-radius: 10px !important;
+  border: 1px solid #ededed;
 }
 
 .Select-value {
-    border: 1px solid #ededed;
+  border: 1px solid #ededed;
 }
+
 .SingleDatePickerInput {
-    width: 100%;
-    border: 0;
+  width: 100%;
+  border: 0;
 }
+
 .SingleDatePicker, #start-date, #end-date {
-    width: 100%;
+  width: 100%;
 }
 
 .DateInput, .DateInput_1 {
-    width: 100%;
+  width: 100%;
 }
 
 .DateInput_input, .DateInput_input_1 {
-    height: calc(1.5em + 0.75rem + 2px);
-    font-size: 0.9375rem;
-    font-weight: 400;
-    color: #000;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ededed;
-    border-radius: 10px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  height: calc(1.5em + 0.75rem + 2px);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #000;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ededed;
+  border-radius: 10px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-

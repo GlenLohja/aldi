@@ -1,68 +1,62 @@
 #records-datatable {
-    background-color: #fff;
-    padding: 0 0 25px 0;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    box-shadow: rgba(145, 158, 171, 0.08) 0 0 2px 0, rgba(145, 158, 171, 0.08) 0 1px;
+  background-color: #fff;
+  padding: 0 0 25px 0;
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  box-shadow: rgba(145, 158, 171, 0.08) 0 0 2px 0, rgba(145, 158, 171, 0.08) 0 1px;
 }
 
 .datatable-row > div:first-child {
-    padding: 0px!important;
+  padding: 0 !important;
 }
 
 #loading {
-    margin: 0px;
+  margin: 0;
 }
 
 .previous-next-container {
-    padding: 25px 15px!important;
+  padding: 25px 15px !important;
 }
 
 .column-header--sort {
-    padding-right: 5px;
-    /* color: black; */
+  padding-right: 5px;
 }
-
 
 .dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
-    --accent: #484848!important;
+  --accent: #484848 !important;
 }
 
-.cell-table {s
-
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: "Public Sans", sans-serif!important;
-    min-width: 400px;
-    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); */
-    border: 0.2px solid #f9fafb;
-    color: #4e545e;
-    border-radius: 25px;
+.cell-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: "Public Sans", sans-serif !important;
+  min-width: 400px;
+  border: 0.2px solid #f9fafb;
+  color: #4e545e;
+  border-radius: 25px;
 }
 
 .column-header-name {
-    text-align: left;
+  text-align: left;
 }
 
 .dash-header {
-    padding: 20px 15px!important;
-    background-color: #f9fafb!important;
-    border: 0 !important
+  padding: 20px 15px !important;
+  background-color: #f9fafb !important;
+  border: 0 !important;
 }
 
 .cell-table tbody tr {
-    border-bottom: 0.5px solid #f6f6f9;
+  border-bottom: 0.5px solid #f6f6f9;
 }
 
-.cell-table tbody tr td  {
-    padding: 17px!important;
-    border-bottom: 1px solid #ebe7e7!important;
-    border-top: 0!important;
+.cell-table tbody tr td {
+  padding: 17px !important;
+  border-bottom: 1px solid #ebe7e7 !important;
+  border-top: 0 !important;
 }
-
 
 .cell-table tbody tr:last-of-type {
-    border-bottom: 0 solid #f4f6f8;
+  border-bottom: 0 solid #f4f6f8;
 }
-

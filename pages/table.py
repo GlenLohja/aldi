@@ -10,7 +10,6 @@ df = pd.read_excel('data/sample.xlsx', engine='openpyxl', sheet_name='Orders')
 
 df['Order Date'] = df['Order Date'].dt.strftime('%Y-%m-%d')
 df['Ship Date'] = df['Ship Date'].dt.strftime('%Y-%m-%d')
-df = df.sort_values(by='Order Date', ascending=False)
 
 # get countries for country dropdown
 unique_countries = df['Country'].unique()
@@ -22,7 +21,7 @@ layout = html.Div(
             # page title
             dbc.Col([
                 html.H3("Order History"),
-            ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, align="center"),
+            ], xs=6, sm=6, md=6, lg=6, xl=6, xxl=6, align="center"),
 
             # add order button
             dbc.Col([
@@ -30,8 +29,8 @@ layout = html.Div(
                     html.I(className="fa-solid fa-plus"),
                     " Add Order"
                 ], id='open', n_clicks=0)
-            ], xs=6, sm=6, md=3, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
-        ], className="pb-4", align="start"),
+            ], xs=6, sm=6, md=6, lg=6, xl=6, xxl=6, className="d-flex justify-content-end"),
+        ], className="py-4", align="start"),
         
         html.Div(id='status-div'),
 
@@ -85,7 +84,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a country"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([
                 dcc.Dropdown(
                     id='state-dropdown',
@@ -93,7 +92,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a state"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([
                 dcc.Dropdown(
                     id='city-dropdown',
@@ -101,7 +100,7 @@ layout = html.Div(
                     value=None,
                     placeholder="Select a city"
                 )
-            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, align="center"),
+            ], xs=12, sm=12, md=3, lg=2, xl=2, xxl=2, className="p-2"),
 
         ], className="filterDiv", justify="start"),
 
@@ -120,13 +119,15 @@ layout = html.Div(
                     columns=[{"name": i, "id": i} for i in df.columns],
                     page_size=10,
                     style_as_list_view=True,
+                    sort_action='native',
+                    sort_by=[{'column_id': 'Order Date', 'direction': 'desc'}],
                     style_table={'overflowX': 'auto'},
                     style_cell={'textAlign': 'left'}
                 )
             ])
         ], className='datatable-row'),
 
-    ], className="table-div"
+    ], className="p-4"
 )
 
 
@@ -211,22 +212,15 @@ def set_cities_options(selected_country, selected_state):
 def update_table(selected_country, selected_state, selected_city):
     
     filtered_df = df.copy()
-    filtered = False
 
     if selected_country:
-        filtered = True
         filtered_df = filtered_df[filtered_df['Country'] == selected_country]
 
     if selected_state:
-        filtered = True
         filtered_df = filtered_df[filtered_df['State'] == selected_state]
 
     if selected_city:
-        filtered = True
         filtered_df = filtered_df[filtered_df['City'] == selected_city]
-    
-    if not filtered:
-        return dash.no_update
 
     return filtered_df.to_dict('records')
 
@@ -254,31 +248,31 @@ def update_table(selected_country, selected_state, selected_city):
         State('customer-id', 'value'),
         State('quantity-id', 'value'),
         State('discount-id', 'value'),
-        State('records-datatable', 'data')
     ],
     prevent_initial_call=True
 )
-def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id, existing_data):
+def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id, discount_id):
+    new_df = df.copy()
 
     if not order_id or not product_id:
         error = "Order ID and Product ID are required."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
-    
-    df_existing = pd.DataFrame(existing_data)
-    if df_existing[(df_existing['Order ID'] == order_id) & (df_existing['Product ID'] == product_id)].empty is False:
+
+    if new_df[(new_df['Order ID'] == order_id) & (new_df['Product ID'] == product_id)].empty is False:
         error = "This order and product combination already exists."
         return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
 
-    new_entry = {
+    new_entry = pd.DataFrame([{
         'Order ID': order_id,
         'Product ID': product_id,
         'Customer ID': customer_id,
         'Quantity': quantity_id,
         'Discount': discount_id,
         'Order Date': datetime.today().strftime('%Y-%m-%d')
-    }
-    existing_data.insert(0, new_entry)
+    }])
+    new_df = pd.concat([new_df, new_entry], ignore_index=True)
+
     success_alert = dbc.Alert("Entry added successfully!", color="success")
-    return existing_data, None, None, None, None, None, success_alert, "", False, False
+    return new_df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
 
 

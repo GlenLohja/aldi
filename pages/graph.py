@@ -111,7 +111,7 @@ layout = html.Div(
                         date=date(2017, 1, 1)
                     )
                 ])
-            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2),
+            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([   
                 html.Div([
                     dbc.Label("End Date")
@@ -124,7 +124,7 @@ layout = html.Div(
                         date=date(2017, 12, 31)
                     )
                 ])
-            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2),
+            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2, className="p-2"),
             dbc.Col([
                 dbc.Label("Date Granularity"),
                 dbc.Select(
@@ -138,7 +138,7 @@ layout = html.Div(
                     value='month',
                     placeholder="Granularity"
                 )
-            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2)
+            ], xs=12, sm=12, md=2, lg=2, xl=2, xxl=2, className="p-2")
         ], className="py-4"),
         dbc.Row([
             dbc.Col(
@@ -152,63 +152,61 @@ layout = html.Div(
             ),
             dbc.Col(
                 [   
-                    html.Div([
-                        dbc.Row([
-                            dbc.Col([
-                                dbc.Label("Y Axis"),
-                                dbc.Select(
-                                    id='yaxis-dropdown',
-                                    options=[
-                                        'Days to Ship',
-                                        'Discount',
-                                        'Profit Ratio',
-                                        'Quantity',
-                                        'Returns',
-                                        'Sales'
-                                    ],
-                                    value='Sales',
-                                )
-                            ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center"),
-                            dbc.Col([
-                                dbc.Label("X Axis"),
-                                dbc.Select(
-                                    id='xaxis-dropdown',
-                                    options=[
-                                        'Days to Ship',
-                                        'Discount',
-                                        'Profit',
-                                        'Profit Ratio',
-                                        'Quantity',
-                                        'Returns'
-                                    ],
-                                    value='Profit',
-                                ),
-                            ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center"),
-                            dbc.Col([
-                                dbc.Label("Breakdown"),
-                                dbc.Select(
-                                    id='breakdown-dropdown',
-                                    options=[
-                                        'Segment',
-                                        'Ship Mode',
-                                        'Customer Name',
-                                        'Category',
-                                        'Sub-Category',
-                                        'Product Name'
-                                    ],
-                                    value='Ship Mode',
-                                    placeholder="Category"
-                                ),
-                            ], xs=4, sm=4, md=3, lg=3, xl=3, xxl=3, align="center")
-                        ], style={'padding-top': '15px'}, justify="end"),
-                        dcc.Graph(
-                            id='bubblechart',
-                        )
-                    ])
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Label("Y Axis"),
+                            dbc.Select(
+                                id='yaxis-dropdown',
+                                options=[
+                                    'Days to Ship',
+                                    'Discount',
+                                    'Profit Ratio',
+                                    'Quantity',
+                                    'Returns',
+                                    'Sales'
+                                ],
+                                value='Sales',
+                            )
+                        ], xs=12, sm=12, md=3, lg=3, xl=3, xxl=3, align="center"),
+                        dbc.Col([
+                            dbc.Label("X Axis"),
+                            dbc.Select(
+                                id='xaxis-dropdown',
+                                options=[
+                                    'Days to Ship',
+                                    'Discount',
+                                    'Profit',
+                                    'Profit Ratio',
+                                    'Quantity',
+                                    'Returns'
+                                ],
+                                value='Profit',
+                            ),
+                        ], xs=12, sm=12, md=3, lg=3, xl=3, xxl=3, align="center"),
+                        dbc.Col([
+                            dbc.Label("Breakdown"),
+                            dbc.Select(
+                                id='breakdown-dropdown',
+                                options=[
+                                    'Segment',
+                                    'Ship Mode',
+                                    'Customer Name',
+                                    'Category',
+                                    'Sub-Category',
+                                    'Product Name'
+                                ],
+                                value='Ship Mode',
+                                placeholder="Category"
+                            ),
+                        ], xs=12, sm=12, md=3, lg=3, xl=3, xxl=3, align="center")
+                    ], className="pt-3", justify="end"),
+                    dcc.Graph(
+                        id='bubblechart'
+                    )
                 ], className="bubble-chart-div", xs=12, sm=12, md=6, lg=6, xl=6, xxl=6
             )
         ])
-    ]
+    ], className="px-3"
 )
 
 

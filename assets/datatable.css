@@ -17,8 +17,15 @@
 .previous-next-container {
     padding: 25px 15px!important;
 }
-.table-div {
-    margin: 20px 40px;
+
+.column-header--sort {
+    padding-right: 5px;
+    /* color: black; */
+}
+
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner table {
+    --accent: #484848!important;
 }
 
 .cell-table {s

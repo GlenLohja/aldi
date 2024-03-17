@@ -10,7 +10,7 @@ def create_sidebar():
                 dbc.Col([
                     html.Div([
                         html.Img(src=logo_url, height="75px", className="company-logo"),
-                        html.H3("ALDI SÜD", className="company")
+                        html.H3("ALDI e", className="company")
                     ], className="page-header")
                 ], width="auto", align="center")
             ], className="mb-4", align="center"),

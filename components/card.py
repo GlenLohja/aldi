@@ -14,7 +14,7 @@ def create_card(icon_class, title, content):
                         dbc.CardBody(
                             [
                                 html.H4(title, className="card-title"),
-                                html.P(content, className="card-text"),
+                                html.P(content, className="card-text")
                             ]
                         ),
                     ], className="px-3", xs=8, sm=8, md=8, lg=9, xl=9, xxl=10)

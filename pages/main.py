@@ -15,9 +15,9 @@ latest_year_df = df[df['Order Date'].dt.year == latest_year]
 latest_month = latest_year_df['Order Date'].dt.month.max()
 
 
-def summarize_sales_data(df, year):
+def summarize_sales_data(dataframe, year):
     # Summarizes sales data for a given year.
-    df_year = df[df['Order Date'].dt.year == year].copy()
+    df_year = dataframe[dataframe['Order Date'].dt.year == year].copy()
     df_year['Month'] = df_year['Order Date'].dt.month
 
     # Group by Month for Sales and Profit Summary
@@ -32,10 +32,10 @@ def summarize_sales_data(df, year):
     return grouped_sales, top_10_products
 
 
-def aggregate_sales_data(df, year, month):
+def aggregate_sales_data(dataframe, year, month):
     # Aggregate sales data for a given year and month.
 
-    df_filtered = df[(df['Order Date'].dt.year == year) & (df['Order Date'].dt.month == month)]
+    df_filtered = dataframe[(dataframe['Order Date'].dt.year == year) & (dataframe['Order Date'].dt.month == month)]
     grouped_df = df_filtered.groupby('Order Date').agg({
         'Sales': 'sum',
         'Profit': 'sum',
@@ -51,28 +51,6 @@ def aggregate_sales_data(df, year, month):
 # Generate options for a month and year component
 year_options = [{'label': year, 'value': year} for year in unique_years]
 month_options = [{'label': month, 'value': str(index)} for index, month in enumerate(calendar.month_name) if month]
-
-
-grouped_sales_df, top_10_products = summarize_sales_data(df, latest_year)
-sales_card = create_card(
-    "fa-solid fa-sack-dollar",
-    "Total Sales",
-    f"{round(grouped_sales_df['Sales'].sum(), 2):,.0f}$"
-)
-
-profit_card = create_card(
-    "fa-solid fa-hand-holding-dollar",
-    "Total Profit",
-    f"{round(grouped_sales_df['Profit'].sum(), 2):,.0f}$"
-)
-
-profit_ratio = round(grouped_sales_df['Profit'].sum() / grouped_sales_df['Sales'].sum(), 3) * 100
-profit_ratio_card = create_card(
-    "fa-solid fa-piggy-bank",
-    "Profit Ratio",
-    f"{profit_ratio}%"
-)
-
 
 layout = html.Div([
     dbc.Row([
@@ -112,16 +90,16 @@ layout = html.Div([
     ], className='py-2'),
 
     dbc.Row([
-            dbc.Col([
-                dbc.Select(
-                    id='property-selector',
-                    options=[
-                        {'label': 'Profit', 'value': 'Profit'},
-                        {'label': 'Sales', 'value': 'Sales'},
-                        {'label': 'Profit Ratio', 'value': 'Profit Ratio'}
-                    ],
-                    value='Profit Ratio'
-                )
+        dbc.Col([
+            dbc.Select(
+                id='property-selector',
+                options=[
+                    {'label': 'Profit', 'value': 'Profit'},
+                    {'label': 'Sales', 'value': 'Sales'},
+                    {'label': 'Profit Ratio', 'value': 'Profit Ratio'}
+                ],
+                value='Profit Ratio'
+            )
         ], className="property-dropdown")
     ], className="compare-months"),
 
@@ -135,7 +113,7 @@ layout = html.Div([
             dcc.Graph(
                 id='orders-chart'
             )
-        ], xs=12, sm=12, md=12, lg=6, xl=4, xxl=4, className="p-2"),
+        ], xs=12, sm=12, md=12, lg=6, xl=4, xxl=4, className="p-2")
     ], className='py-2'),
 ], className="px-3")
 
@@ -172,6 +150,7 @@ def update_cards(year_selected):
 
     return sales_card, profit_card, profit_ratio_card
 
+
 @callback(
     [
         Output('monthly-chart', 'figure'),
@@ -182,7 +161,7 @@ def update_cards(year_selected):
     ]
 )
 def update_monthly_charts(year_selected):
-    # most recent year is sele  cted initially
+    # most recent year is selected initially
     grouped_sales_df, top_10_products = summarize_sales_data(df, int(year_selected))
 
     monthly_figure = {
@@ -267,7 +246,7 @@ def update_timeline_chart(property_selected, year_selected, month_selected):
     grouped_prev_month_df = aggregate_sales_data(df, prev_month_year, prev_month)
 
     yaxis = {
-        "title" : property_selected
+        "title": property_selected
     }
     if property_selected == 'Profit Ratio':
         yaxis['tickformat'] = '.0%'
@@ -295,11 +274,11 @@ def update_timeline_chart(property_selected, year_selected, month_selected):
             title='Daily Trend',
             yaxis=yaxis,
             hovermode='x',
-            legend=dict(bgcolor='rgba(255,255,255,0.5)',orientation='h')
+            legend=dict(bgcolor='rgba(255,255,255,0.5)', orientation='h')
         )
     }
 
-    orders_fig =  {
+    orders_fig = {
         'data': [
             go.Scatter(
                 x=grouped_current_month_df['Order Date'],

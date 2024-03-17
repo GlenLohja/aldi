@@ -18,7 +18,7 @@ def create_sidebar():
             dbc.NavLink(
                 html.Div([
                     html.I(className="fa-solid fa-house"),
-                    html.Div("Home", className="ms-2"),
+                    html.Div("Home", className="ms-2")
                 ], className="d-flex align-items-center"),
                 href="/",
                 active="exact"
@@ -26,7 +26,7 @@ def create_sidebar():
             dbc.NavLink(
                 html.Div([
                     html.I(className="fa-solid fa-table"),
-                    html.Div("Datatable", className="ms-2"),
+                    html.Div("Datatable", className="ms-2")
                 ], className="d-flex align-items-center"),
                 href="/table",
                 active="exact"

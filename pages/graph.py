@@ -19,8 +19,8 @@ df_merged = pd.merge(orders_df, returns_df, on='Order ID', how='left')
 start_date, end_date = '1/1/2017', '12/31/2017'
 
 
-def filter_by_date(df, start_date, end_date):
-    filtered_orders = df[(df['Order Date'] >= start_date) & (df['Order Date'] <= end_date)]
+def filter_by_date(df, start_d, end_d):
+    filtered_orders = df[(df['Order Date'] >= start_d) & (df['Order Date'] <= end_d)]
     return filtered_orders
 
 
@@ -236,11 +236,11 @@ def set_xaxis_options(selected_yaxis):
         Input('end-date', 'date')
     ]
 )
-def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_date):
-    if start_date is None or end_date is None or xaxis_val is None or yaxis_val is None or breakdown_val is None:
+def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_d, end_d):
+    if start_d is None or end_d is None or xaxis_val is None or yaxis_val is None or breakdown_val is None:
         raise PreventUpdate
 
-    filter_date = filter_by_date(df_merged, start_date, end_date)
+    filter_date = filter_by_date(df_merged, start_d, end_d)
     df_filtered = get_bubble_chart_data(filter_date, xaxis_val, yaxis_val, breakdown_val)
 
     # hover config
@@ -292,13 +292,13 @@ def update_bubble_chart(xaxis_val, yaxis_val, breakdown_val, start_date, end_dat
         Input('granularity-dropdown', 'value')
     ]
 )
-def update_timeline_chart_v2(start_date, end_date, granularity):
-    if start_date is None or end_date is None or granularity is None:
+def update_timeline_chart_v2(start_d, end_d, granularity):
+    if start_d is None or end_d is None or granularity is None:
         raise PreventUpdate
 
-    filter_date = filter_by_date(df_merged, start_date, end_date)
+    filter_date = filter_by_date(df_merged, start_d, end_d)
     updated_df = filter_by_granularity(filter_date, granularity)
-    
+
     mode = 'lines'
     if len(updated_df) == 1:
         mode += '+markers'
@@ -309,22 +309,98 @@ def update_timeline_chart_v2(start_date, end_date, granularity):
     fig = make_subplots(rows=2, cols=2, shared_xaxes=True, vertical_spacing=0.1, horizontal_spacing=0.25)
 
     # Top left subplot with Profit and sales
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Profit'], name='Profit', marker=dict(color='#e6221b'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Profit</br>"), row=1, col=1)
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Sales'], name='Sales', marker=dict(color='#4c7a9c'), hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"), row=1, col=1)
+    fig.add_trace(
+        go.Bar(
+            x=updated_df['Date'],
+            y=updated_df['Profit'],
+            name='Profit',
+            marker=dict(color='#e6221b'),
+            hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Profit</br>"
+        ),
+        row=1,
+        col=1
+    )
+    fig.add_trace(
+        go.Bar(
+            x=updated_df['Date'],
+            y=updated_df['Sales'],
+            name='Sales',
+            marker=dict(color='#4c7a9c'),
+            hovertemplate="<b>%{x}</b><br>$%{y:,.0f} Sales</br>"
+        ),
+        row=1,
+        col=1
+    )
 
     # top right subplot with Discount and Profit Ratio
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Discount'], name='Discount', mode=mode, marker=dict(color='#e6221b')), row=1, col=2)
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Profit Ratio'], name='Profit Ratio', mode=mode, marker=dict(color='#4c7a9c')), row=1, col=2)
+    fig.add_trace(
+        go.Scatter(
+            x=updated_df['Date'],
+            y=updated_df['Discount'],
+            name='Discount',
+            mode=mode,
+            marker=dict(color='#e6221b')
+        ),
+        row=1,
+        col=2
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=updated_df['Date'],
+            y=updated_df['Profit Ratio'],
+            name='Profit Ratio',
+            mode=mode,
+            marker=dict(color='#4c7a9c')
+        ),
+        row=1,
+        col=2
+    )
 
     # bottom left subplot with Returned & Quantity
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Returned'], name='Returns', marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Returns</br>"), row=2, col=1)
-    fig.add_trace(go.Bar(x=updated_df['Date'], y=updated_df['Quantity'], name='Quantity', marker=dict(color='#4c7a9c'), hovertemplate=hovertemplate + " Quantity</br>"), row=2, col=1)
+    fig.add_trace(
+        go.Bar(
+            x=updated_df['Date'],
+            y=updated_df['Returned'],
+            name='Returns',
+            marker=dict(color='#e6221b'),
+            hovertemplate=hovertemplate + " Returns</br>"
+        ),
+        row=2,
+        col=1
+    )
+    fig.add_trace(
+        go.Bar(
+            x=updated_df['Date'],
+            y=updated_df['Quantity'],
+            name='Quantity',
+            marker=dict(color='#4c7a9c'),
+            hovertemplate=hovertemplate + " Quantity</br>"
+        ),
+        row=2,
+        col=1
+    )
 
     # Bottom right subplot with Days to ship
-    fig.add_trace(go.Scatter(x=updated_df['Date'], y=updated_df['Days_to_Ship'], name='Days to Ship', mode=mode, marker=dict(color='#e6221b'), hovertemplate=hovertemplate + " Days to Ship</br>"), row=2, col=2)
+    fig.add_trace(
+        go.Scatter(
+            x=updated_df['Date'],
+            y=updated_df['Days_to_Ship'],
+            name='Days to Ship',
+            mode=mode,
+            marker=dict(color='#e6221b'),
+            hovertemplate=hovertemplate + " Days to Ship</br>"
+        ),
+        row=2,
+        col=2
+    )
 
     # Update layout
-    fig.update_layout(height=600, title_text="Timeline Graph", plot_bgcolor='rgba(255,255,255,0.5)', legend=dict(bordercolor='rgba(255,255,255,0.5)', borderwidth=2, bgcolor='rgba(255,255,255,0.5)', orientation='h') )
+    fig.update_layout(
+        height=600,
+        title_text="Timeline Graph",
+        plot_bgcolor='rgba(255,255,255,0.5)',
+        legend=dict(bordercolor='rgba(255,255,255,0.5)', bgcolor='rgba(255,255,255,0.5)', orientation='h')
+    )
     fig.update_yaxes(title_text="Profit & Sales", row=1, col=1)
     fig.update_yaxes(title_text="Discount & Profit Ratio", tickformat='.0%', row=1, col=2)
     fig.update_yaxes(title_text="Quantity & Returns", row=2, col=1)

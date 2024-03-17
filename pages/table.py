@@ -125,8 +125,7 @@ layout = html.Div(
                     style_cell={'textAlign': 'left'}
                 )
             ])
-        ], className='datatable-row'),
-
+        ], className='datatable-row')
     ], className="p-4"
 )
 
@@ -255,11 +254,25 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
 
     if not order_id or not product_id:
         error = "Order ID and Product ID are required."
-        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
+        return (
+            dash.no_update,
+            order_id, product_id, customer_id, quantity_id, discount_id,
+            dash.no_update,
+            error,
+            True,
+            True
+        )
 
     if new_df[(new_df['Order ID'] == order_id) & (new_df['Product ID'] == product_id)].empty is False:
         error = "This order and product combination already exists."
-        return dash.no_update, order_id, product_id, customer_id, quantity_id, discount_id, dash.no_update, error, True, True
+        return (
+            dash.no_update,
+            order_id, product_id, customer_id, quantity_id, discount_id,
+            dash.no_update,
+            error,
+            True,
+            True
+        )
 
     new_entry = pd.DataFrame([{
         'Order ID': order_id,
@@ -272,6 +285,11 @@ def add_entry_to_table(n_clicks, order_id, product_id, customer_id, quantity_id,
     new_df = pd.concat([new_df, new_entry], ignore_index=True)
 
     success_alert = dbc.Alert("Entry added successfully!", color="success")
-    return new_df.to_dict('records'), None, None, None, None, None, success_alert, "", False, False
-
-
+    return (
+        new_df.to_dict('records'),
+        None, None, None, None, None,
+        success_alert,
+        "",
+        False,
+        False
+    )

@@ -191,7 +191,6 @@ def update_monthly_charts(year_selected):
         ],
         'layout': go.Layout(
             title=f'Monthly Sales, Profit & Profit Ratio - {year_selected}',
-            # xaxis=dict(title='Date'),
             yaxis=dict(title='Profit & Sales', side='left', rangemode='tozero'),
             yaxis2=dict(title='Ratio %', side='right', overlaying='y', rangemode='tozero', tickformat='.0%'),
             barmode='group',

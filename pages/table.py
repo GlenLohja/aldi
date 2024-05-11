@@ -20,7 +20,7 @@ layout = html.Div(
         dbc.Row([
             # page title
             dbc.Col([
-                html.H3("Orders"),
+                html.H3("Orders History"),
             ], xs=6, sm=6, md=6, lg=6, xl=6, xxl=6, align="center"),
 
             # add order button

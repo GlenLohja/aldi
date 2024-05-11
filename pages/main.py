@@ -14,7 +14,6 @@ latest_year = unique_years[0]
 latest_year_df = df[df['Order Date'].dt.year == latest_year]
 latest_month = latest_year_df['Order Date'].dt.month.max()
 
-
 def summarize_sales_data(dataframe, year):
     # Summarizes sales data for a given year.
     df_year = dataframe[dataframe['Order Date'].dt.year == year].copy()

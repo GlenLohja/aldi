@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://index.docker.io/v1/
-        username: ${{ secrets.AzureAppService_ContainerUsername_1d8e5ade31a741b4b173ddd08a49a90f }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_7f8e24f5cb51463e8e9e9b5f2a558284 }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_619b0f966c4d447fbf32d419b92fce1f }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_035f85a7149b4e6ea843fd1bd24098fe }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_1d8e5ade31a741b4b173ddd08a49a90f }}/aldi:${{ github.sha }}
+        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_619b0f966c4d447fbf32d419b92fce1f }}/aldi:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'glenlohja'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_21dfc1c8a1e24f1dbe4fc5504a326fe5 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_1d8e5ade31a741b4b173ddd08a49a90f }}/aldi:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_b92941578c1447a7ab9521cd9452d75f }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_619b0f966c4d447fbf32d419b92fce1f }}/aldi:${{ github.sha }}'
